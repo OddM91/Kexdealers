@@ -2,7 +2,7 @@ package ecs;
 
 import org.joml.Vector3f;
 
-public class PointLightComponent extends Component{
+public class PointLightComponent {
 
 	private int eID;
 	
@@ -24,10 +24,6 @@ public class PointLightComponent extends Component{
 	
 	public int getEID(){
 		return eID;
-	}
-	
-	public void setEID(int eID) {
-		this.eID = eID;
 	}
 
 	public Vector3f getPosition(){
