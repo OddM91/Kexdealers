@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -120,8 +121,8 @@ public  abstract class ShaderProgram{
 		GL20.glUniformMatrix3fv(location, false, matrixBuffer3f);
 	}
 	
-	protected void loadMatrix4f(int location, Matrix4f matrix){
-		matrixBuffer4f = matrix.get(matrixBuffer4f);
+	protected void loadMatrix4f(int location, Matrix4fc matrix4fc){
+		matrixBuffer4f = matrix4fc.get(matrixBuffer4f);
 		GL20.glUniformMatrix4fv(location, false, matrixBuffer4f);
 	}
 	
