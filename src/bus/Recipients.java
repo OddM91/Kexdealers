@@ -1,6 +1,7 @@
 package bus;
 
-public enum Systems {
+public enum Recipients {
+	MAIN,
 	RENDER_SYSTEM,
 	AUDIO_SYSTEM,
 	NETWORK_SYSTEM,

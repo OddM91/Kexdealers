@@ -9,9 +9,9 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import audio.AudioSystem;
+import bus.Message;
 import bus.MessageBus;
-import bus.NetworkSysMessage;
-import bus.Operation;
+import bus.Recipients;
 import ecs.AbstractSystem;
 import ecs.EntityController;
 import input.InputMapper;
@@ -37,6 +37,9 @@ public class LinkStart implements Runnable{
 	
 	// list of all systems
 	private final HashMap<String, AbstractSystem> systems = new HashMap<>();
+	
+	// op codes
+	public static final int SHUTDOWN = 0;
 	
 	public static void main(String[] args){
 		LinkStart link = new LinkStart();
@@ -81,9 +84,7 @@ public class LinkStart implements Runnable{
 		// Online mode: Connect to a server and request an instance from there.
 		//				Should the connection fail, fall back to local mode.
 		if(online) {		
-			NetworkSysMessage message = 
-					(NetworkSysMessage) messageBus.messageNetworkSys(
-							Operation.SYS_NETWORK_CONNECT, new String("localhost:2222"));
+			Message message = messageBus.messageSystem(Recipients.NETWORK_SYSTEM, 0/*connect*/, "localhost", 2222);
 			float connectTimeoutBegin = (float) GLFW.glfwGetTime();
 			float connectTimeoutRemaining = 3000; // milliseconds
 			while((!message.isComplete()) || (connectTimeoutRemaining > 0)) {
@@ -173,7 +174,7 @@ public class LinkStart implements Runnable{
 		int playerID = 0; //look into file to choose the correct one :S
 		Player player = new Player(messageBus, entityController);
 		
-		messageBus.messageRenderSys(bus.Operation.SYS_RENDER_DEBUGLINES_ON);
+		messageBus.messageSystem(Recipients.RENDER_SYSTEM, 0/*debug lines*/, true/*to set them to "on"*/);
 		((AudioSystem) systems.get("AudioSystem")).playEntitySound(8);
 		
 		// < The Loop >
@@ -190,12 +191,14 @@ public class LinkStart implements Runnable{
 			// Physics
 			//system.get("PhysicsSystem").run();
 			
-			if (!headless) {
+			if (!headless) { 
 				// Audio
 				systems.get("AudioSystem").run();
 				
 				// Render
 				systems.get("RenderSystem").run();
+				
+				messageBus.getNextMessage(Recipients.MAIN);
 				
 				if(GLFW.glfwWindowShouldClose(display.window)){
 					running = false;
@@ -218,7 +221,7 @@ public class LinkStart implements Runnable{
 			display.destroy();
 		}
 		if(online) {
-			messageBus.messageNetworkSys(bus.Operation.SYS_NETWORK_DISCONNECT, null);
+			messageBus.messageSystem(Recipients.NETWORK_SYSTEM, 0/*DC*/, "disconnect");
 		}
 	}
 	

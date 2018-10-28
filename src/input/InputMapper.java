@@ -10,11 +10,16 @@ import org.lwjgl.glfw.GLFW;
 
 import bus.MessageBus;
 import bus.Operation;
+import bus.Recipients;
+import example.LinkStart;
+import example.Player;
+import example.TeleportationSystem;
 import render.Display;
+import render.RenderSystem;
 
 public class InputMapper {
-	private Display disp;
-	private MessageBus bus;
+	private Display display;
+	private MessageBus messageBus;
 
 	// action state tracking
 	private boolean wireframeMode = false;
@@ -26,8 +31,8 @@ public class InputMapper {
 			throw new IllegalStateException("Display not initialised!");
 		}
 
-		this.disp = disp;
-		this.bus = bus;
+		this.display = disp;
+		this.messageBus = bus;
 		// TODO detect if future input libs present
 		GLFW.glfwPollEvents();
 
@@ -74,38 +79,37 @@ public class InputMapper {
 		
 		// system
 		if (is.closeGame()) {
-			GLFW.glfwSetWindowShouldClose(disp.window, true);
+			messageBus.messageSystem(Recipients.MAIN, LinkStart.SHUTDOWN, null);
 		}
 
 		// movement
-		bus.messagePlayer(Operation.PLAYER_MOVE, is.pollMoveDirection());
+		messageBus.messagePlayer(Operation.PLAYER_MOVE, is.pollMoveDirection());
 		if (is.doJump()) {
-			bus.messagePlayer(Operation.PLAYER_JUMP);
+			messageBus.messageSystem(Recipients.PLAYER, Player.JUMP, null);
 		}
 
 		// look
-		bus.messagePlayer(Operation.PLAYER_LOOK, is.pollLookMove().mul(is.getLookSensitivity()));
+		messageBus.messagePlayer(Operation.PLAYER_LOOK, is.pollLookMove().mul(is.getLookSensitivity()));
 
 		// action
 		if (is.doInteract()) { // interacting with world
-			bus.messagePlayer(Operation.PLAYER_INTERACT);
+			messageBus.messageSystem(Recipients.PLAYER, Player.INTERACT, null);
 		}
 
 		// debug
-		if (is.isActivatingGravitySuck()) {
+		if (is.doAbility()) {
 			// TODO
 		}
 		if (is.doTeleport()) {
-			bus.messageTeleportationSys(Operation.SYS_TELEPORTATION_TARGETCOORDS, 0,
-					new Vector3f(450.0f, 25.0f, 350.0f));
+			messageBus.messageSystem(Recipients.TELEPORTATION_SYSTEM, TeleportationSystem.TARGETED_TELEPORTATION, 0/*playerID*/, new Vector3f(450.0f, 25.0f, 350.0f));
 		}
 		if (is.toggleWireframe()) {
 			wireframeMode = !wireframeMode;
 
 			if (wireframeMode) {
-				bus.messageRenderSys(Operation.SYS_RENDER_WIREFRAME_ON);
+				messageBus.messageSystem(Recipients.RENDER_SYSTEM, RenderSystem.WIREFRAME, true);
 			} else {
-				bus.messageRenderSys(Operation.SYS_RENDER_WIREFRAME_OFF);
+				messageBus.messageSystem(Recipients.RENDER_SYSTEM, RenderSystem.WIREFRAME, false);
 			}
 		}
 

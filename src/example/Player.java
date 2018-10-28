@@ -4,16 +4,20 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import bus.Message;
 import bus.MessageBus;
-import bus.PlayerMessage;
-import bus.Systems;
+import bus.Recipients;
 import ecs.EntityController;
 import ecs.FPPCameraComponent;
 import ecs.PhysicsComponent;
 import ecs.Transformable;
 
 public class Player {
-
+	
+	//op codes
+	public static final int INTERACT = 0;
+	public static final int JUMP = 1;
+	
 	private MessageBus bus;
 	private EntityController entityController;
 
@@ -48,13 +52,13 @@ public class Player {
 		boolean inputInteract = false;
 
 		// process message bus
-		PlayerMessage message;
-		while((message = (PlayerMessage) bus.getNextMessage(Systems.PLAYER)) != null) {
-			switch(message.getOP()) {
-			case PLAYER_JUMP:
+		Message message;
+		while((message = bus.getNextMessage(Recipients.PLAYER)) != null) {
+			switch(message.getBehaviorID()) {
+			case JUMP:
 				inputJump = true;
 				break;
-			case PLAYER_INTERACT:
+			case INTERACT:
 				inputInteract = true;
 				break;
 			case PLAYER_MOVE:

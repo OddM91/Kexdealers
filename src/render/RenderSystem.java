@@ -16,9 +16,9 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11C;
 import org.lwjgl.opengl.GL30;
 
+import bus.Message;
 import bus.MessageBus;
-import bus.Systems;
-import bus.RenderSysMessage;
+import bus.Recipients;
 import ecs.AbstractSystem;
 import ecs.EntityController;
 import ecs.FPPCameraComponent;
@@ -30,6 +30,9 @@ import terrain.TerrainRenderer;
 import ui.LineRenderer;
 
 public class RenderSystem extends AbstractSystem {
+	
+	// op codes
+	public static final int WIREFRAME = 0;
 	
 	private final Display display;
 
@@ -91,20 +94,22 @@ public class RenderSystem extends AbstractSystem {
 	public void update() {
 		super.timeMarkStart();
 		// message queue
-		RenderSysMessage message;
-		while((message = (RenderSysMessage) messageBus.getNextMessage(Systems.RENDER_SYSTEM)) != null) {
-			switch(message.getOP()) {
-			case SYS_RENDER_WIREFRAME_ON: GL11C.glPolygonMode(GL11C.GL_FRONT_AND_BACK, GL11C.GL_LINE);
+		Message message;
+		while((message = messageBus.getNextMessage(Recipients.RENDER_SYSTEM)) != null) {
+			switch(message.getBehaviorID()) {
+			case WIREFRAME: 
+				Object[] args = message.getArgs();
+				boolean wireframe = (boolean) args[0];
+				GL11C.glPolygonMode(GL11C.GL_FRONT_AND_BACK, 
+						(wireframe) ? GL11C.GL_LINE : GL11C.GL_FILL);
 				break;
-			case SYS_RENDER_WIREFRAME_OFF: GL11C.glPolygonMode(GL11C.GL_FRONT_AND_BACK, GL11C.GL_FILL);
-				break;
-			case SYS_RENDER_DEBUGLINES_ON: drawDebugLines = true;
+			/*case SYS_RENDER_DEBUGLINES_ON: drawDebugLines = true;
 				break;
 			case SYS_RENDER_DEBUGLINES_OFF: drawDebugLines = false; lineRenderer.clearLines();
 				break;
 			case SYS_RENDER_DEBUGLINES_ADDNEWLINE:
 				lineRenderer.addLine(message.getPosBegin(), message.getPosEnd(), message.getColour(), message.getTime());
-				break;
+				break;*/
 			default: System.err.println("Render operation not implemented");
 			}
 		}

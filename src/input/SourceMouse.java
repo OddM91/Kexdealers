@@ -11,6 +11,8 @@ import render.Display;
 
 public class SourceMouse implements InputSourceI {
 
+	private float sensitivity = 0.04f;
+	
 	private boolean dointeract = false;
 	private Vector2f prevMousePos = new Vector2f();
 
@@ -24,7 +26,7 @@ public class SourceMouse implements InputSourceI {
 	
 	@Override
 	public float getLookSensitivity() {
-		return 0.04f;
+		return sensitivity;
 	}
 
 	@Override

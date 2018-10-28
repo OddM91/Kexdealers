@@ -6,9 +6,9 @@ import java.util.Set;
 
 import org.joml.Vector3f;
 
+import bus.Message;
 import bus.MessageBus;
-import bus.Systems;
-import bus.TeleportationSysMessage;
+import bus.Recipients;
 import ecs.AbstractSystem;
 import ecs.EntityController;
 import ecs.FPPCameraComponent;
@@ -16,7 +16,10 @@ import ecs.Transformable;
 import loaders.BlueprintLoader;
 
 public class TeleportationSystem extends AbstractSystem {
-
+	
+	// op codes
+	public static final int TARGETED_TELEPORTATION = 0;
+	
 	private HashMap<String, Teleportation> teleportations;
 
 	public TeleportationSystem(MessageBus messageBus, EntityController entityController) {
@@ -40,11 +43,14 @@ public class TeleportationSystem extends AbstractSystem {
 		super.timeMarkStart();
 
 		// work message queue
-		TeleportationSysMessage message;
-		while ((message = (TeleportationSysMessage) messageBus.getNextMessage(Systems.TELEPORTATION_SYSTEM)) != null) {
-			switch (message.getOP()) {
-			case SYS_TELEPORTATION_TARGETCOORDS:
-				teleportTo(message.getTargetEID(), message.getDestination());
+		Message message;
+		while ((message = messageBus.getNextMessage(Recipients.TELEPORTATION_SYSTEM)) != null) {
+			switch (message.getBehaviorID()) {
+			case TARGETED_TELEPORTATION:
+				Object[] args = message.getArgs();
+				int targetEID = (int) args[0];
+				Vector3f destination = (Vector3f) args[1];
+				teleportTo(targetEID, destination);
 				break;
 			default:
 				System.err.println("Teleportation operation not implemented");
@@ -81,7 +87,7 @@ public class TeleportationSystem extends AbstractSystem {
 				teleportations.put(frags[0], new Teleportation(frags[0], // name
 						new Vector3f(Float.valueOf(frags[1]), Float.valueOf(frags[2]), Float.valueOf(frags[3])), // destination
 						new Vector3f(Float.valueOf(frags[4]), Float.valueOf(frags[5]), Float.valueOf(frags[6])), // triggerLocation
-						Float.valueOf(frags[7]))); // triggerradius
+						Float.valueOf(frags[7]))); // trigger radius
 
 			} catch (NullPointerException | IndexOutOfBoundsException e) {
 				System.err.println("Teleportations: couldn't load teleportation. Too few arguments.");

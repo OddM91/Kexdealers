@@ -1,17 +1,44 @@
 package input;
 
+import java.util.HashMap;
+
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
+
+import com.sun.nio.file.SensitivityWatchEventModifier;
 
 import bus.MessageBus;
 import render.Display;
 
 public class SourceKeyboard implements InputSourceI {
 	
-	private boolean dojump = false;
-	private boolean dointeract = false;
-	private boolean doteleport = false;
-	private boolean togglewireframe = false;
+	private enum Actions {
+		FORWARD,
+		BACKWARD,
+		LEFT,
+		RIGHT,
+		JUMP,
+		INTERACT,
+		ABILITY,
+		SHUTDOWN,
+		
+		LOOK_UP,
+		LOOK_DOWN,
+		LOOK_LEFT,
+		LOOK_RIGHT,
+		
+		WIREFRAME,
+		TELEPORT
+	}
+	private HashMap<Actions, Integer> keyMappings;
+	private float sensitivity = 0.25f;
+	
+	
+	// flags
+	private boolean doJump = false;
+	private boolean doInteract = false;
+	private boolean doTeleport = false;
+	private boolean toggleWireframe = false;
 
 	private final Display display;
 	private final MessageBus bus;
@@ -19,27 +46,45 @@ public class SourceKeyboard implements InputSourceI {
 	public SourceKeyboard(Display disp, MessageBus bus) {
 		this.display = disp;
 		this.bus = bus;
+		// Configure key bindings
+		keyMappings.put(Actions.FORWARD, GLFW.GLFW_KEY_W);
+		keyMappings.put(Actions.BACKWARD, GLFW.GLFW_KEY_S);
+		keyMappings.put(Actions.LEFT, GLFW.GLFW_KEY_A);
+		keyMappings.put(Actions.RIGHT, GLFW.GLFW_KEY_D);
+		keyMappings.put(Actions.JUMP, GLFW.GLFW_KEY_SPACE);
+		
+		keyMappings.put(Actions.INTERACT, GLFW.GLFW_KEY_E);
+		keyMappings.put(Actions.ABILITY, GLFW.GLFW_KEY_Q);
+		keyMappings.put(Actions.SHUTDOWN, GLFW.GLFW_KEY_ESCAPE);
+		
+		keyMappings.put(Actions.LOOK_UP, GLFW.GLFW_KEY_UP);
+		keyMappings.put(Actions.LOOK_DOWN, GLFW.GLFW_KEY_DOWN);
+		keyMappings.put(Actions.LOOK_LEFT, GLFW.GLFW_KEY_LEFT);
+		keyMappings.put(Actions.LOOK_RIGHT, GLFW.GLFW_KEY_RIGHT);
+		
+		keyMappings.put(Actions.WIREFRAME, GLFW.GLFW_KEY_L);
+		keyMappings.put(Actions.TELEPORT, GLFW.GLFW_KEY_T);
 	}
 
 	@Override
 	public float getLookSensitivity() {
-		return 0.25f;
+		return sensitivity;
 	}
 	
 	@Override
 	public Vector2f pollMoveDirection() {
 		Vector2f ret = new Vector2f();
 		
-		if (GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_A) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LEFT)) > 0) {
 			ret.x += -1;
 		}
-		if (GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_W) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.FORWARD)) > 0) {
 			ret.y += 1;
 		}
-		if (GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_S) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.BACKWARD)) > 0) {
 			ret.y += -1;
 		}
-		if (GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_D) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.RIGHT)) > 0) {
 			ret.x += 1;
 		}
 		
@@ -52,17 +97,17 @@ public class SourceKeyboard implements InputSourceI {
 
 	@Override
 	public boolean doJump() {
-		int glfwResult = GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_SPACE);
+		int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.JUMP));
 
 		// dojump is used to ensure that jump can be only triggered once per keypress
 
-		if (!dojump && glfwResult >= 1) {
+		if (!doJump && glfwResult >= 1) {
 			// key was just pressed
-			dojump = true;
+			doJump = true;
 			return true;
-		} else if (dojump && glfwResult <= 0) {
+		} else if (doJump && glfwResult <= 0) {
 			// key was just released
-			dojump = false;
+			doJump = false;
 		}
 		// else: key is held down or not pressed
 
@@ -73,16 +118,16 @@ public class SourceKeyboard implements InputSourceI {
 	public Vector2f pollLookMove() {
 		Vector2f ret = new Vector2f();
 		
-		if (GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_LEFT) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_LEFT)) > 0) {
 			ret.x += -1;
 		}
-		if (GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_UP) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_UP)) > 0) {
 			ret.y += 1;
 		}
-		if (GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_DOWN) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_DOWN)) > 0) {
 			ret.y += -1;
 		}
-		if (GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_RIGHT) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_RIGHT)) > 0) {
 			ret.x += 1;
 		}
 		
@@ -96,19 +141,18 @@ public class SourceKeyboard implements InputSourceI {
 
 	@Override
 	public boolean doInteract() {
-		int glfwResult = GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_E);
-		glfwResult += GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_F);
+		int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.INTERACT));
 
 		// dointeract is used to ensure that interact can be only triggered once per
 		// keypress
 
-		if (!dointeract && glfwResult >= 1) {
+		if (!doInteract && glfwResult >= 1) {
 			// key was just pressed
-			dointeract = true;
+			doInteract = true;
 			return true;
-		} else if (dointeract && glfwResult <= 0) {
+		} else if (doInteract && glfwResult <= 0) {
 			// key was just released
-			dointeract = false;
+			doInteract = false;
 		}
 		// else: key is held down or not pressed
 
@@ -116,23 +160,23 @@ public class SourceKeyboard implements InputSourceI {
 	}
 
 	@Override
-	public boolean isActivatingGravitySuck() {
-		return GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_0) > 0;
+	public boolean doAbility() {
+		return GLFW.glfwGetKey(display.window, keyMappings.get(Actions.ABILITY)) > 0;
 	}
 
 	@Override
 	public boolean doTeleport() {
-		int glfwResult = GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_T);
+		int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.TELEPORT));
 
 		// doteleport is used to ensure that teleport can be only triggered once per keypress
 
-		if (!doteleport && glfwResult >= 1) {
+		if (!doTeleport && glfwResult >= 1) {
 			// key was just pressed
-			doteleport = true;
+			doTeleport = true;
 			return true;
-		} else if (doteleport && glfwResult <= 0) {
+		} else if (doTeleport && glfwResult <= 0) {
 			// key was just released
-			doteleport = false;
+			doTeleport = false;
 		}
 		// else: key is held down or not pressed
 
@@ -141,17 +185,17 @@ public class SourceKeyboard implements InputSourceI {
 
 	@Override
 	public boolean toggleWireframe() {
-			int glfwResult = GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_V);
+			int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.WIREFRAME));
 
 		// togglewireframe is used to ensure that wireframe can be only toggled once per keypress
 
-		if (!togglewireframe && glfwResult >= 1) {
+		if (!toggleWireframe && glfwResult >= 1) {
 			// key was just pressed
-			togglewireframe = true;
+			toggleWireframe = true;
 			return true;
-		} else if (togglewireframe && glfwResult <= 0) {
+		} else if (toggleWireframe && glfwResult <= 0) {
 			// key was just released
-			togglewireframe = false;
+			toggleWireframe = false;
 		}
 		// else: key is held down or not pressed
 
@@ -160,7 +204,7 @@ public class SourceKeyboard implements InputSourceI {
 
 	@Override
 	public boolean closeGame() {
-		return GLFW.glfwGetKey(display.window, GLFW.GLFW_KEY_ESCAPE) > 0;
+		return GLFW.glfwGetKey(display.window, keyMappings.get(Actions.SHUTDOWN)) > 0;
 	}
 
 }

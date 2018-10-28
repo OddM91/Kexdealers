@@ -27,7 +27,7 @@ public interface InputSourceI {
 	default boolean doInteract() {return false; } // interacting with world
 	
 	// debug
-	default boolean isActivatingGravitySuck() { return false; }
+	default boolean doAbility() { return false; }
 	default boolean doTeleport() { return false; }
 	default boolean toggleWireframe() { return false; }
 }
