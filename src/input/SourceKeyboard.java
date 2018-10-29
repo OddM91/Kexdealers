@@ -47,6 +47,7 @@ public class SourceKeyboard implements InputSourceI {
 		this.display = disp;
 		this.bus = bus;
 		// Configure key bindings
+		keyMappings = new HashMap<>();
 		keyMappings.put(Actions.FORWARD, GLFW.GLFW_KEY_W);
 		keyMappings.put(Actions.BACKWARD, GLFW.GLFW_KEY_S);
 		keyMappings.put(Actions.LEFT, GLFW.GLFW_KEY_A);
@@ -75,16 +76,16 @@ public class SourceKeyboard implements InputSourceI {
 	public Vector2f pollMoveDirection() {
 		Vector2f ret = new Vector2f();
 		
-		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LEFT)) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LEFT)) == GLFW.GLFW_PRESS) {
 			ret.x += -1;
 		}
-		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.FORWARD)) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.FORWARD)) == GLFW.GLFW_PRESS) {
 			ret.y += 1;
 		}
-		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.BACKWARD)) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.BACKWARD)) == GLFW.GLFW_PRESS) {
 			ret.y += -1;
 		}
-		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.RIGHT)) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.RIGHT)) == GLFW.GLFW_PRESS) {
 			ret.x += 1;
 		}
 		
@@ -101,11 +102,11 @@ public class SourceKeyboard implements InputSourceI {
 
 		// dojump is used to ensure that jump can be only triggered once per keypress
 
-		if (!doJump && glfwResult >= 1) {
+		if (!doJump && glfwResult == GLFW.GLFW_PRESS) {
 			// key was just pressed
 			doJump = true;
 			return true;
-		} else if (doJump && glfwResult <= 0) {
+		} else if (doJump && glfwResult == GLFW.GLFW_RELEASE) {
 			// key was just released
 			doJump = false;
 		}
@@ -118,16 +119,16 @@ public class SourceKeyboard implements InputSourceI {
 	public Vector2f pollLookMove() {
 		Vector2f ret = new Vector2f();
 		
-		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_LEFT)) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_LEFT)) == GLFW.GLFW_PRESS) {
 			ret.x += -1;
 		}
-		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_UP)) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_UP)) == GLFW.GLFW_PRESS) {
 			ret.y += 1;
 		}
-		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_DOWN)) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_DOWN)) == GLFW.GLFW_PRESS) {
 			ret.y += -1;
 		}
-		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_RIGHT)) > 0) {
+		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_RIGHT)) == GLFW.GLFW_PRESS) {
 			ret.x += 1;
 		}
 		
@@ -146,11 +147,11 @@ public class SourceKeyboard implements InputSourceI {
 		// dointeract is used to ensure that interact can be only triggered once per
 		// keypress
 
-		if (!doInteract && glfwResult >= 1) {
+		if (!doInteract && glfwResult == GLFW.GLFW_PRESS) {
 			// key was just pressed
 			doInteract = true;
 			return true;
-		} else if (doInteract && glfwResult <= 0) {
+		} else if (doInteract && glfwResult == GLFW.GLFW_RELEASE) {
 			// key was just released
 			doInteract = false;
 		}
@@ -161,7 +162,7 @@ public class SourceKeyboard implements InputSourceI {
 
 	@Override
 	public boolean doAbility() {
-		return GLFW.glfwGetKey(display.window, keyMappings.get(Actions.ABILITY)) > 0;
+		return GLFW.glfwGetKey(display.window, keyMappings.get(Actions.ABILITY)) == GLFW.GLFW_PRESS;
 	}
 
 	@Override
@@ -170,11 +171,11 @@ public class SourceKeyboard implements InputSourceI {
 
 		// doteleport is used to ensure that teleport can be only triggered once per keypress
 
-		if (!doTeleport && glfwResult >= 1) {
+		if (!doTeleport && glfwResult == GLFW.GLFW_PRESS) {
 			// key was just pressed
 			doTeleport = true;
 			return true;
-		} else if (doTeleport && glfwResult <= 0) {
+		} else if (doTeleport && glfwResult == GLFW.GLFW_RELEASE) {
 			// key was just released
 			doTeleport = false;
 		}
@@ -189,11 +190,11 @@ public class SourceKeyboard implements InputSourceI {
 
 		// togglewireframe is used to ensure that wireframe can be only toggled once per keypress
 
-		if (!toggleWireframe && glfwResult >= 1) {
+		if (!toggleWireframe && glfwResult == GLFW.GLFW_PRESS) {
 			// key was just pressed
 			toggleWireframe = true;
 			return true;
-		} else if (toggleWireframe && glfwResult <= 0) {
+		} else if (toggleWireframe && glfwResult == GLFW.GLFW_RELEASE) {
 			// key was just released
 			toggleWireframe = false;
 		}
@@ -204,7 +205,7 @@ public class SourceKeyboard implements InputSourceI {
 
 	@Override
 	public boolean closeGame() {
-		return GLFW.glfwGetKey(display.window, keyMappings.get(Actions.SHUTDOWN)) > 0;
+		return GLFW.glfwGetKey(display.window, keyMappings.get(Actions.SHUTDOWN)) == GLFW.GLFW_PRESS;
 	}
 
 }

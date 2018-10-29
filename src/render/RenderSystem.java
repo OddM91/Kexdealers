@@ -96,9 +96,11 @@ public class RenderSystem extends AbstractSystem {
 		// message queue
 		Message message;
 		while((message = messageBus.getNextMessage(Recipients.RENDER_SYSTEM)) != null) {
+			
+			final Object[] args = message.getArgs();
+			
 			switch(message.getBehaviorID()) {
 			case WIREFRAME: 
-				Object[] args = message.getArgs();
 				boolean wireframe = (boolean) args[0];
 				GL11C.glPolygonMode(GL11C.GL_FRONT_AND_BACK, 
 						(wireframe) ? GL11C.GL_LINE : GL11C.GL_FILL);

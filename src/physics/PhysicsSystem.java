@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import org.joml.Vector3f;
 
+import bus.Message;
 import bus.MessageBus;
+import bus.Recipients;
 import ecs.AbstractSystem;
 import ecs.EntityController;
 import ecs.PhysicsComponent;
@@ -13,7 +15,10 @@ import loaders.BlueprintLoader;
 import terrain.Terrain;
 
 public class PhysicsSystem extends AbstractSystem {
-
+	
+	// OP codes
+	public static final int SET_FORCE = 0;
+	
 	private static final Vector3f G_FORCE = new Vector3f(0, -98.1f, 0);
 
 	public PhysicsSystem(MessageBus messageBus, EntityController entityController) {
@@ -34,7 +39,23 @@ public class PhysicsSystem extends AbstractSystem {
 	@Override
 	public void update() {
 		super.timeMarkStart();
-
+		
+		// Process messages
+		Message message;
+		while((message = messageBus.getNextMessage(Recipients.PHYSICS_SYSTEM)) != null) {
+			
+			final Object[] args = message.getArgs();
+			
+			switch(message.getBehaviorID()) {
+			case SET_FORCE:
+				// targetEID, forceName, vector
+				entityController.getPhysicsComponent((int) args[0])
+						.applyForce((String) args[1], (Vector3f) args[2]);
+				break;
+			default: System.err.println("Main operation not implemented");
+			}
+		}
+		
 		// process all physics components
 		for (PhysicsComponent currentComp : entityController.getPhysicsComponents()) {
 			Transformable currTrans = entityController.getTransformable(currentComp.getEID());

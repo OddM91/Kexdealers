@@ -9,7 +9,6 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import bus.MessageBus;
-import bus.Operation;
 import bus.Recipients;
 import example.LinkStart;
 import example.Player;
@@ -65,7 +64,7 @@ public class InputMapper {
 				iter.remove();
 			}
 		}
-
+		
 		// process events
 		for (InputSourceI is : inputSources) {
 			handleActions(is);
@@ -83,13 +82,13 @@ public class InputMapper {
 		}
 
 		// movement
-		messageBus.messagePlayer(Operation.PLAYER_MOVE, is.pollMoveDirection());
+		messageBus.messageSystem(Recipients.PLAYER, Player.MOVE, is.pollMoveDirection());
 		if (is.doJump()) {
 			messageBus.messageSystem(Recipients.PLAYER, Player.JUMP, null);
 		}
 
 		// look
-		messageBus.messagePlayer(Operation.PLAYER_LOOK, is.pollLookMove().mul(is.getLookSensitivity()));
+		messageBus.messageSystem(Recipients.PLAYER, Player.LOOK, is.pollLookMove().mul(is.getLookSensitivity()));
 
 		// action
 		if (is.doInteract()) { // interacting with world

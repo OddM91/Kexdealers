@@ -180,7 +180,22 @@ public class LinkStart implements Runnable{
 		// < The Loop >
 		double frameBegin;
 		while(running){
+			
 			frameBegin = GLFW.glfwGetTime();
+			// Process messages
+			Message message;
+			while((message = messageBus.getNextMessage(Recipients.MAIN)) != null) {
+				
+				final Object[] args = message.getArgs();
+				
+				switch(message.getBehaviorID()) {
+				case SHUTDOWN:
+					running = false;
+					break;
+				default: System.err.println("Main operation not implemented");
+				}
+			
+			}
 			
 			// World update
 			inputMapper.updateInput();
@@ -197,8 +212,6 @@ public class LinkStart implements Runnable{
 				
 				// Render
 				systems.get("RenderSystem").run();
-				
-				messageBus.getNextMessage(Recipients.MAIN);
 				
 				if(GLFW.glfwWindowShouldClose(display.window)){
 					running = false;

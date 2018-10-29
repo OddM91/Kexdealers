@@ -43,7 +43,7 @@ public class PhysicsComponent extends Component {
 				.setAffectedByGravity(this.isAffectedByGravity)
 				.setOnGround(this.isOnGround);
 		for(Entry<String, Vector3f> force : listOfAppliedForces.entrySet()) {
-			deepCopy.setForce(force.getKey(), force.getValue());
+			deepCopy.applyForce(force.getKey(), force.getValue());
 		}
 		return deepCopy;
 	}

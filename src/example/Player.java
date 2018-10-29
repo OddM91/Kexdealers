@@ -15,8 +15,10 @@ import ecs.Transformable;
 public class Player {
 	
 	//op codes
-	public static final int INTERACT = 0;
-	public static final int JUMP = 1;
+	public static final int MOVE = 0;
+	public static final int INTERACT = 1;
+	public static final int JUMP = 2;
+	public static final int LOOK = 3;
 	
 	private MessageBus bus;
 	private EntityController entityController;
@@ -54,6 +56,9 @@ public class Player {
 		// process message bus
 		Message message;
 		while((message = bus.getNextMessage(Recipients.PLAYER)) != null) {
+			
+			final Object[] args = message.getArgs();
+			
 			switch(message.getBehaviorID()) {
 			case JUMP:
 				inputJump = true;
@@ -61,11 +66,12 @@ public class Player {
 			case INTERACT:
 				inputInteract = true;
 				break;
-			case PLAYER_MOVE:
-				inputMoveDir.add(message.getVector());
+			case MOVE:
+				inputMoveDir.add((Vector2f) args[0]);
+				
 				break;
-			case PLAYER_LOOK:
-				inputLookDir.add(message.getVector());
+			case LOOK:
+				inputLookDir.add((Vector2f) args[0]);
 				break;
 			default: System.err.println("Player operation not implemented");
 			}
@@ -90,7 +96,7 @@ public class Player {
 		Vector2f lookRot = new Vector2f(inputLookDir);
 		lookRot.mul((float) delta);
 		
-		// TODO remove me
+		// TODO remove me (I like it though D: -kekz)
 		if (inputInteract) {
 			System.out.println("Player interacted");
 		}

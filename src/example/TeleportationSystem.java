@@ -45,9 +45,11 @@ public class TeleportationSystem extends AbstractSystem {
 		// work message queue
 		Message message;
 		while ((message = messageBus.getNextMessage(Recipients.TELEPORTATION_SYSTEM)) != null) {
+			
+			final Object[] args = message.getArgs();
+			
 			switch (message.getBehaviorID()) {
 			case TARGETED_TELEPORTATION:
-				Object[] args = message.getArgs();
 				int targetEID = (int) args[0];
 				Vector3f destination = (Vector3f) args[1];
 				teleportTo(targetEID, destination);
