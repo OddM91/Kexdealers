@@ -52,7 +52,7 @@ public class PhysicsSystem extends AbstractSystem {
 				entityController.getPhysicsComponent((int) args[0])
 						.applyForce((String) args[1], (Vector3f) args[2]);
 				break;
-			default: System.err.println("Main operation not implemented");
+			default: System.err.println("Physics operation not implemented");
 			}
 		}
 		

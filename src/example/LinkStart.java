@@ -84,7 +84,7 @@ public class LinkStart implements Runnable{
 		// Online mode: Connect to a server and request an instance from there.
 		//				Should the connection fail, fall back to local mode.
 		if(online) {		
-			Message message = messageBus.messageSystem(Recipients.NETWORK_SYSTEM, 0/*connect*/, "localhost", 2222);
+			Message message = messageBus.messageSystem(Recipients.NETWORK_SYSTEM, NetworkSystem.CONNECT, "localhost", 2222, "kekzdealer");
 			float connectTimeoutBegin = (float) GLFW.glfwGetTime();
 			float connectTimeoutRemaining = 3000; // milliseconds
 			while((!message.isComplete()) || (connectTimeoutRemaining > 0)) {
@@ -234,7 +234,7 @@ public class LinkStart implements Runnable{
 			display.destroy();
 		}
 		if(online) {
-			messageBus.messageSystem(Recipients.NETWORK_SYSTEM, 0/*DC*/, "disconnect");
+			messageBus.messageSystem(Recipients.NETWORK_SYSTEM, NetworkSystem.DISCONNECT, null);
 		}
 	}
 	

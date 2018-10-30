@@ -13,15 +13,18 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import bus.Message;
 import bus.MessageBus;
 import bus.Recipients;
-import bus.NetworkSysMessage;
 import ecs.AbstractSystem;
 import ecs.Component;
 import ecs.EntityController;
 import loaders.BlueprintLoader;
 
 public class NetworkSystem extends AbstractSystem implements Runnable{
+	
+	public static final int CONNECT = 0;
+	public static final int DISCONNECT = 1;
 	
 	public volatile boolean running = false;
 	
@@ -66,16 +69,23 @@ public class NetworkSystem extends AbstractSystem implements Runnable{
 		super.timeMarkStart();
 		
 		// message queue 
-		NetworkSysMessage message;
-		while((message = (NetworkSysMessage) messageBus.getNextMessage(Recipients.NETWORK_SYSTEM)) != null) {
-			switch(message.getOP()) {
-			case SYS_NETWORK_DISCONNECT: disconnectFromServer();
-				break;
-			case SYS_NETWORK_CONNECT: String[] address = ((String) message.getContent()).split(":");
-				boolean success = connectToServer(address[1], Integer.parseInt(address[1]), "kekzdealer");
+		Message message;
+		while((message = messageBus.getNextMessage(Recipients.NETWORK_SYSTEM)) != null) {
+			
+			Object[] args = message.getArgs();
+			
+			switch(message.getBehaviorID()) {
+			case CONNECT:
+				boolean success = connectToServer(
+						(String) args[0], 	// Host name
+						(int) args[0], 		// Port
+						(String) args[2]);	// Login name
 				if(success) {
 					message.setComplete();
 				}
+				break;
+			case DISCONNECT: 
+				disconnectFromServer();
 				break;
 			default: System.err.println("Network operation not implemented");
 			}
