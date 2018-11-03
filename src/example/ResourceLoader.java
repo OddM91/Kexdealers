@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 import audio.AudioResource;
 import loaders.CubeMapLoader;
 import loaders.MaterialLoader;
-import loaders.ModelLoader;
+import loaders.MeshLoader;
 import loaders.OBJLoader;
 import loaders.TerrainMeshLoader;
 import render.DirectionalLight;
@@ -25,7 +25,7 @@ public class ResourceLoader {
 	private MaterialLoader materialLoader;
 	private CubeMapLoader cubeMapLoader;
 	
-	private ModelLoader modelLoader;
+	private MeshLoader modelLoader;
 	private TerrainMeshLoader terrainMeshLoader;
 	
 	private OBJLoader objLoader;
@@ -59,7 +59,7 @@ public class ResourceLoader {
 		// create tools
 		materialLoader = new MaterialLoader();
 		cubeMapLoader = new CubeMapLoader();
-		modelLoader = new ModelLoader();
+		modelLoader = new MeshLoader();
 		terrainMeshLoader = new TerrainMeshLoader(modelLoader);
 		objLoader = new OBJLoader();
 	}
@@ -125,7 +125,7 @@ public class ResourceLoader {
 	}
 	
 	public void unloadTerrain(){
-		// blah blah delete stuff
+		// TODO blah blah delete stuff
 		terrain = null;
 	}
 	

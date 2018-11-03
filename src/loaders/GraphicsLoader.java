@@ -4,8 +4,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import com.mokiat.data.front.parser.IMTLParser;
@@ -13,8 +15,15 @@ import com.mokiat.data.front.parser.IOBJParser;
 import com.mokiat.data.front.parser.MTLLibrary;
 import com.mokiat.data.front.parser.MTLMaterial;
 import com.mokiat.data.front.parser.MTLParser;
+import com.mokiat.data.front.parser.OBJDataReference;
+import com.mokiat.data.front.parser.OBJFace;
+import com.mokiat.data.front.parser.OBJMesh;
 import com.mokiat.data.front.parser.OBJModel;
+import com.mokiat.data.front.parser.OBJNormal;
+import com.mokiat.data.front.parser.OBJObject;
 import com.mokiat.data.front.parser.OBJParser;
+import com.mokiat.data.front.parser.OBJTexCoord;
+import com.mokiat.data.front.parser.OBJVertex;
 
 import example.AssetData;
 import render.DirectionalLight;
@@ -24,6 +33,7 @@ import terrain.TerrainMesh;
 import textures.Material;
 import textures.MultiTexture;
 import textures.Texture;
+import utility.MiscUtility;
 import wrapper.ModelData;
 import wrapper.RawMesh;
 
@@ -38,7 +48,7 @@ public class GraphicsLoader {
 	private final MaterialLoader materialLoader;
 	private final CubeMapLoader cubeMapLoader;
 	
-	private final ModelLoader modelLoader;
+	private final MeshLoader modelLoader;
 	private final TerrainMeshLoader terrainMeshLoader;
 	
 	private final OBJLoader objLoader;
@@ -46,6 +56,7 @@ public class GraphicsLoader {
 	
 	// NEW OBJ LOADER STUFF
 	private HashMap<String, Model> models = new HashMap<>();
+	private HashMap<String, Mesh> meshes = new HashMap<>();
 	private HashMap<String, Material> materials = new HashMap<>();
 	// ---
 	
@@ -62,14 +73,16 @@ public class GraphicsLoader {
 		// create tools
 		materialLoader = new MaterialLoader();
 		cubeMapLoader = new CubeMapLoader();
-		modelLoader = new ModelLoader();
+		modelLoader = new MeshLoader();
 		terrainMeshLoader = new TerrainMeshLoader(modelLoader);
 		objLoader = new OBJLoader();
 		dataFrontLoader = new DataFrontLoader();
 	}
 	
 	public Model getModel(String ressourceName) {
-		return models.get(ressourceName);
+		Model model = models.get(ressourceName);
+		model.refCountUp();
+		return model;
 	}
 	
 	public void loadModel(String resourceName) {
@@ -95,13 +108,62 @@ public class GraphicsLoader {
 					}
 				}
 			}
+			
+			// Build Mesh ---
+			// I have no idea how indices work with this library.
+			// I will also only use the vertex-indices.
+			ArrayList<Float> vertices = new ArrayList<>();
+			ArrayList<Float> normals = new ArrayList<>();
+			ArrayList<Float> texCoords = new ArrayList<>();
+			ArrayList<Integer> indices = new ArrayList<>();
+			// Vertices
+			for(OBJVertex objVertex : model.getVertices()) {
+				vertices.add(objVertex.x);
+				vertices.add(objVertex.y);
+				vertices.add(objVertex.z);
+			}
+			// Normals
+			for(OBJNormal objNormal : model.getNormals()) {
+				normals.add(objNormal.x);
+				normals.add(objNormal.y);
+				normals.add(objNormal.z);
+			}
+			// Texture Coordinates
+			for(OBJTexCoord objTexCoord : model.getTexCoords()) {
+				texCoords.add(objTexCoord.u);
+				texCoords.add(objTexCoord.v);
+				// texCoords.add(objTexCoord.w);
+			}
+			// Indices
+			for(OBJObject objObject: model.getObjects()) {
+				for(OBJMesh objMesh : objObject.getMeshes()) {
+					for(OBJFace objFace : objMesh.getFaces()) {
+						for(OBJDataReference dataRef : objFace.getReferences()) {
+							// extract indices
+							int index_normal = (dataRef.hasNormalIndex()) ? dataRef.normalIndex : -1;
+							// -->
+							indices.add(index_normal);
+							int index_texCoord = (dataRef.hasTexCoordIndex()) ? dataRef.texCoordIndex : -1;
+							int index_vertex = (dataRef.hasVertexIndex()) ? dataRef.vertexIndex : -1;
+						}
+					}
+				}
+			}
+			Mesh mesh = new Mesh(
+					MiscUtility.toFloatArray(vertices),
+					MiscUtility.toFloatArray(texCoords),
+					MiscUtility.toFloatArray(normals),
+					MiscUtility.toIntArray(indices)
+					);
+			mesh.loadToVideoMemory();
+			meshes.put(resourceName, mesh);
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		// move ref coutner from model to mesh + material
 		//model.refCountUp();
 	}
 	
@@ -110,6 +172,9 @@ public class GraphicsLoader {
 		if(model != null) {
 			boolean alive = model.refCountDown();
 			if(!alive) {
+				// delete mesh data from video memory
+				meshes.get(model.getMeshName()).deleteFromVideoMemory();
+				
 				models.put(ressourceName, null);
 			}
 		}

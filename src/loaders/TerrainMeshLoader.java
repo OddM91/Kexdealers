@@ -14,9 +14,9 @@ public class TerrainMeshLoader {
 	
 	private static final int MAX_PIXEL_COLOR = 256 * 256 * 256;
 	
-	ModelLoader modelLoader;
+	MeshLoader modelLoader;
 	
-	public TerrainMeshLoader(ModelLoader modelLoader){
+	public TerrainMeshLoader(MeshLoader modelLoader){
 		this.modelLoader = modelLoader;
 	}
 	

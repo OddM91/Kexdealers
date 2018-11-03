@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL30C;
 import utility.MiscUtility;
 import wrapper.RawMesh;
 
-public class ModelLoader {
+public class MeshLoader {
 	
 	private ArrayList<Integer> vaos = new ArrayList<>();
 	private ArrayList<Integer> vbos = new ArrayList<>();

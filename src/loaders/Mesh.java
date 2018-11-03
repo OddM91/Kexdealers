@@ -24,8 +24,6 @@ public class Mesh {
 		this.textureCoords = textureCoords;
 		this.normals = normals;
 		this.indices = indices;
-		
-		setupMesh();
 	}
 	
 	public int getVaoID() {
@@ -40,7 +38,7 @@ public class Mesh {
 	 * Deletes data stored on the graphics card. 
 	 * Don't forget that you still need to dereference this Mesh instance :) 
 	 */
-	public void delete() {
+	public void deleteFromVideoMemory() {
 		GL30C.glDeleteVertexArrays(VAO);
 		GL15C.glDeleteBuffers(vertexVBO);
 		GL15C.glDeleteBuffers(tcVBO);
@@ -48,7 +46,7 @@ public class Mesh {
 		GL15C.glDeleteBuffers(EBO);
 	}
 	
-	private void setupMesh() {		
+	public void loadToVideoMemory() {		
 		// Create and bind VAO
 		VAO = GL30C.glGenVertexArrays();
 		GL30C.glBindVertexArray(VAO);
