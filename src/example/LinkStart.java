@@ -229,12 +229,16 @@ public class LinkStart implements Runnable{
 			}
 			tickCounter++;
 		}
-		
+			
 		if (!headless) {
 			display.destroy();
 		}
 		if(online) {
 			messageBus.messageSystem(Recipients.NETWORK_SYSTEM, NetworkSystem.DISCONNECT, null);
+		}
+		
+		for(AbstractSystem system : systems.values()) {
+			system.cleanUp();
 		}
 	}
 	

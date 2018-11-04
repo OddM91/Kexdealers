@@ -11,6 +11,8 @@ import utility.MiscUtility;
 
 public class Mesh {
 	
+	private int referenceCounter = 0;
+	
 	private float[] vertices;
 	private float[] textureCoords;
 	private float[] normals;
@@ -24,6 +26,20 @@ public class Mesh {
 		this.textureCoords = textureCoords;
 		this.normals = normals;
 		this.indices = indices;
+	}
+	
+	public void refCountUp() {
+		referenceCounter++;
+	}
+	
+	/**
+	 * Decrease the reference counter towards this model instance. 
+	 * @return
+	 * Returns whether this instance is still alive after the method call.
+	 */
+	public boolean refCountDown() {
+		referenceCounter--;
+		return (referenceCounter > 0) ? true : false;
 	}
 	
 	public int getVaoID() {

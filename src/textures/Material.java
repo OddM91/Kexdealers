@@ -5,7 +5,9 @@ import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11C;
 
 public class Material {
-
+	
+	private int referenceCounter = 0;
+	
 	public static final Vector3f DEFAULT_COLOR = new Vector3f(0.5f, 0.0f, 0.5f);
 	private String name;
 	// Colors
@@ -14,11 +16,11 @@ public class Material {
 	private Vector3f specular = DEFAULT_COLOR;
 	private Vector3f transmission = DEFAULT_COLOR;
 	// Textures
-	private int ambientID;
-	private int diffuseID;
-	private int specularID;
-	private int specularExponentID;
-	private int dissolveID;
+	private int ambientID = -1;
+	private int diffuseID = -1;
+	private int specularID = -1;
+	private int specularExponentID = -1;
+	private int dissolveID = -1;
 	// Parameters
 	private float dissolve;
 	private float specularExponent;
@@ -40,10 +42,24 @@ public class Material {
 		this.specularExponent = specularExponent;
 	}
 
-	// old constructor
+	// TODO old constructor
 	public Material(int diffuseID, int specularID, float shininess, int width, int height) {
 		this.diffuseID = diffuseID;
 		this.specularID = specularID;
+	}
+	
+	public void refCountUp() {
+		referenceCounter++;
+	}
+	
+	/**
+	 * Decrease the reference counter towards this model instance. 
+	 * @return
+	 * Returns whether this instance is still alive after the method call.
+	 */
+	public boolean refCountDown() {
+		referenceCounter--;
+		return (referenceCounter > 0) ? true : false;
 	}
 	
 	public String getName() {
@@ -94,7 +110,7 @@ public class Material {
 		return specularExponent;
 	}
 
-	public void delete(){
+	public void deleteFromVideoMemory(){
 		GL11C.glDeleteTextures(ambientID);
 		GL11C.glDeleteTextures(diffuseID);
 		GL11C.glDeleteTextures(specularID);

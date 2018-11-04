@@ -64,11 +64,25 @@ public class MaterialLoader {
 		color = material.getTransmissionColor();
 		Vector3f transmission = new Vector3f(color.r, color.g, color.b);
 		// Textures
-		int ambientID = loadTexture(material.getAmbientTexture(), false);
-		int diffuseID = loadTexture(material.getDiffuseTexture(), true);
-		int specularID = loadTexture(material.getSpecularTexture(), false);
-		int specularExponentID = loadTexture(material.getSpecularExponentTexture(), false);
-		int dissolveID = loadTexture(material.getDissolveTexture(), false);
+		final String ambientFile = material.getAmbientTexture();
+		final String diffuseFile = material.getDiffuseTexture();
+		final String specularFile = material.getSpecularTexture();
+		final String specularExponentFile = material.getSpecularExponentTexture();
+		final String dissolveFile = material.getDissolveTexture();
+		int ambientID = loadTexture(
+				(ambientFile == null) ? "default" : ambientFile,
+				false);
+		int diffuseID = loadTexture(
+				(diffuseFile == null) ? "default" : diffuseFile,
+				true);
+		int specularID = loadTexture(
+				(specularFile == null) ? "default" : specularFile,
+				false);
+		int specularExponentID = loadTexture(
+				(specularExponentFile == null) ? "default" : specularExponentFile,
+				false);
+		int dissolveID = loadTexture(
+				(dissolveFile == null) ? "default" : dissolveFile, false);
 		// Parameters
 		float dissolve = material.getDissolve();
 		float specularExponent = material.getSpecularExponent();

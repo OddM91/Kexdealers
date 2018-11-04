@@ -34,7 +34,7 @@ public abstract class AbstractSystem {
 	/*
 	 * The cleanUo() method is supposed to be called before this system's run() method exits and the thread terminates.
 	 */
-	protected abstract void cleanUp();
+	public abstract void cleanUp();
 	/*
 	 * Loads data from a blueprint file into the ECS
 	 */

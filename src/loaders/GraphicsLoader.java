@@ -52,7 +52,6 @@ public class GraphicsLoader {
 	private final TerrainMeshLoader terrainMeshLoader;
 	
 	private final OBJLoader objLoader;
-	private final DataFrontLoader dataFrontLoader;
 	
 	// NEW OBJ LOADER STUFF
 	private HashMap<String, Model> models = new HashMap<>();
@@ -76,7 +75,6 @@ public class GraphicsLoader {
 		modelLoader = new MeshLoader();
 		terrainMeshLoader = new TerrainMeshLoader(modelLoader);
 		objLoader = new OBJLoader();
-		dataFrontLoader = new DataFrontLoader();
 	}
 	
 	public Model getModel(String ressourceName) {
@@ -97,13 +95,13 @@ public class GraphicsLoader {
 			// extract all the materials used by this model
 			for(String libraryReference : model.getMaterialLibraries()) {
 				final InputStream mtlStream = new FileInputStream(libraryReference);
-				MTLLibrary mtlLibrary = mtlParser.parse(mtlStream);
+				final MTLLibrary mtlLibrary = mtlParser.parse(mtlStream);
 				for(MTLMaterial mtlMaterial : mtlLibrary.getMaterials()) {
 					// check if a material has been loaded already
 					if(materials.containsKey(mtlMaterial.getName())) {
 						continue;
 					} else {
-						Material material = materialLoader.loadMaterial(mtlMaterial);
+						final Material material = materialLoader.loadMaterial(mtlMaterial);
 						materials.put(libraryReference, material);
 					}
 				}
@@ -112,10 +110,10 @@ public class GraphicsLoader {
 			// Build Mesh ---
 			// I have no idea how indices work with this library.
 			// I will also only use the vertex-indices.
-			ArrayList<Float> vertices = new ArrayList<>();
-			ArrayList<Float> normals = new ArrayList<>();
-			ArrayList<Float> texCoords = new ArrayList<>();
-			ArrayList<Integer> indices = new ArrayList<>();
+			final ArrayList<Float> vertices = new ArrayList<>();
+			final ArrayList<Float> normals = new ArrayList<>();
+			final ArrayList<Float> texCoords = new ArrayList<>();
+			final ArrayList<Integer> indices = new ArrayList<>();
 			// Vertices
 			for(OBJVertex objVertex : model.getVertices()) {
 				vertices.add(objVertex.x);
@@ -163,7 +161,6 @@ public class GraphicsLoader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// move ref coutner from model to mesh + material
 		//model.refCountUp();
 	}
 	
@@ -171,10 +168,7 @@ public class GraphicsLoader {
 		Model model = models.get(ressourceName);
 		if(model != null) {
 			boolean alive = model.refCountDown();
-			if(!alive) {
-				// delete mesh data from video memory
-				meshes.get(model.getMeshName()).deleteFromVideoMemory();
-				
+			if(!model.refCountDown()) {
 				models.put(ressourceName, null);
 			}
 		}
