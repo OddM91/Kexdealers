@@ -32,6 +32,7 @@ public class RenderSystem extends AbstractSystem {
 	
 	// op codes
 	public static final int WIREFRAME = 0;
+	public static final int LINES = 1;
 	
 	private final Display display;
 
@@ -130,15 +131,21 @@ public class RenderSystem extends AbstractSystem {
 	@Override
 	public void loadBlueprint(ArrayList<String> blueprint) {
 		
-		// - Renderable
 		String[] frags = null;
-		// Skybox
+		// - Renderable
+		ArrayList<String> renderableData = BlueprintLoader.getAllLinesWith("RENDERABLE", blueprint);
+		for(String dataSet : renderableData){
+			int eID = BlueprintLoader.extractEID(dataSet);
+			frags = BlueprintLoader.getDataFragments(dataSet);
+			materialize(eID, frags[0]);
+		}
+		// - Skybox
 		String skyboxData = BlueprintLoader.getLineWith("SKYBOX", blueprint);
 		frags = BlueprintLoader.getDataFragments(skyboxData);
 		graphicsLoader.loadSkybox(
 				Float.valueOf(frags[0]),
 				frags[1]);
-		// Sun
+		// - Sun
 		String sunData = BlueprintLoader.getLineWith("SUN", blueprint);
 		frags = BlueprintLoader.getDataFragments(sunData);
 		Vector3f directionInverse = new Vector3f(Float.valueOf(frags[0]), Float.valueOf(frags[1]), Float.valueOf(frags[2]));
@@ -148,12 +155,6 @@ public class RenderSystem extends AbstractSystem {
 		graphicsLoader.loadSun(
 				directionInverse, 
 				DL_ambient, DL_diffuse, DL_specular);
-		ArrayList<String> renderableData = BlueprintLoader.getAllLinesWith("RENDERABLE", blueprint);
-		for(String dataSet : renderableData){
-			int eID = BlueprintLoader.extractEID(dataSet);
-			frags = BlueprintLoader.getDataFragments(dataSet);
-			materialize(eID, frags[0]);
-		}
 		// - PointLightComponent
 		ArrayList<String> pointLightComponentData = BlueprintLoader.getAllLinesWith("POINTLIGHTCOMPONENT", blueprint);
 		for(String dataSet : pointLightComponentData){

@@ -62,7 +62,11 @@ public class EntityRenderer {
 		GL13C.glActiveTexture(GL13C.GL_TEXTURE1);
 		GL11C.glBindTexture(GL11C.GL_TEXTURE_2D, model.getMaterial().getSpecularID());
 		// Upload Phong-Shading data
-		shader.uploadMaterial(0, 1, model.getMaterial().getSpecularExponent());
+		shader.uploadMaterial(0, 1,
+				model.getMaterial().getAmbient(),
+				model.getMaterial().getDiffuse(),
+				model.getMaterial().getSpecular(),
+				model.getMaterial().getSpecularExponent());
 	}
 	
 	private void unbindEntityAppearance(Model model){

@@ -10,7 +10,7 @@ TRANSFORMABLE{eID=0}{500/7/400/0/0/0/1}
 FPPCAMERACOMPONENT{eID=0}
 >c model loader test entity
 TRANSFORMABLE{eID=1}{600/7/500/0/0/0/1}
-RENDERABLE{eID=1}{AnimatedHuman}
+RENDERABLE{eID=1}{player}
 >c teleportations
 >c param: name - destination vec3 - trigger location vec3 - trigger radius
 TELEPORTATION{tp00 /100.0f/0/100.0f /660/0/500 /30}

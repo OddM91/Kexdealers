@@ -22,6 +22,9 @@ public class EntityShader extends ShaderProgram{
 	// Material struct attributes
 	private int location_diffuseMap;
 	private int location_specularMap;
+	private int location_ambientColor;
+	private int location_diffuseColor;
+	private int location_specularColor;
 	private int location_shininess;
 	// Directional Light struct attributes
 	private int location_dirLightDirection;
@@ -49,6 +52,9 @@ public class EntityShader extends ShaderProgram{
 		// Material
 		location_diffuseMap = super.getUniformLocation("material.diffuse");
 		location_specularMap = super.getUniformLocation("material.specular");
+		location_ambientColor = super.getUniformLocation("material.ambient_color");
+		location_diffuseColor = super.getUniformLocation("material.diffuse_color");
+		location_specularColor = super.getUniformLocation("material.specular_color");
 		location_shininess = super.getUniformLocation("material.shininess");
 		// Directional Light
 		location_dirLightDirection = super.getUniformLocation("dirLight.direction");
@@ -78,9 +84,14 @@ public class EntityShader extends ShaderProgram{
 		super.loadMatrix4f(location_projectionMatrix, projectionMatrix);
 	}
 	
-	public void uploadMaterial(int diffuseMapTextureBank, int specularMapTexureBank, float shininess){
+	public void uploadMaterial(int diffuseMapTextureBank, int specularMapTexureBank, 
+			Vector3f ambientColor, Vector3f diffuseColor, Vector3f specularColor, 
+			float shininess){
 		super.loadInt(location_diffuseMap, diffuseMapTextureBank);
 		super.loadInt(location_specularMap, specularMapTexureBank);
+		super.loadVector3f(location_ambientColor, ambientColor);
+		super.loadVector3f(location_diffuseColor, diffuseColor);
+		super.loadVector3f(location_specularColor, specularColor);
 		super.loadFloat(location_shininess, shininess);
 	}
 	

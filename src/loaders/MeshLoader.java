@@ -18,6 +18,7 @@ public class MeshLoader {
 	private ArrayList<Integer> ebos = new ArrayList<>();
 	
 	// Variable dimension loader
+	// TODO only load the skyybox mesh
 	public SkyboxMesh loadToVAO(float[] positions, int dimensions){
 		int vaoID = createVAO();
 		// Store vertices

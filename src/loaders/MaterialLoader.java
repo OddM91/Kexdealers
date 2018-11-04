@@ -20,6 +20,8 @@ import textures.Material;
 
 public class MaterialLoader {
 	
+	private static final String DEFAULT_TEXTURE = "./res/TEX/default";
+	
 	private class Texture2D{
 		private int id;
 		private int width;
@@ -68,19 +70,19 @@ public class MaterialLoader {
 		final String specularExponentFile = material.getSpecularExponentTexture();
 		final String dissolveFile = material.getDissolveTexture();
 		int ambientID = loadTexture(
-				(ambientFile == null) ? "default" : ambientFile,
+				(ambientFile == null) ? DEFAULT_TEXTURE : ambientFile,
 				false);
 		int diffuseID = loadTexture(
-				(diffuseFile == null) ? "default" : diffuseFile,
+				(diffuseFile == null) ? DEFAULT_TEXTURE : diffuseFile,
 				true);
 		int specularID = loadTexture(
-				(specularFile == null) ? "default" : specularFile,
+				(specularFile == null) ? DEFAULT_TEXTURE : specularFile,
 				false);
 		int specularExponentID = loadTexture(
-				(specularExponentFile == null) ? "default" : specularExponentFile,
+				(specularExponentFile == null) ? DEFAULT_TEXTURE : specularExponentFile,
 				false);
 		int dissolveID = loadTexture(
-				(dissolveFile == null) ? "default" : dissolveFile, false);
+				(dissolveFile == null) ? DEFAULT_TEXTURE : dissolveFile, false);
 		// Parameters
 		float dissolve = material.getDissolve();
 		float specularExponent = material.getSpecularExponent();

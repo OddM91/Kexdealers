@@ -139,7 +139,7 @@ public class LinkStart implements Runnable{
 		int playerID = 0; //look into file to choose the correct one :S
 		Player player = new Player(messageBus, entityController);
 		
-		messageBus.messageSystem(Recipients.RENDER_SYSTEM, 0/*debug lines*/, true/*to set them to "on"*/);
+		messageBus.messageSystem(Recipients.RENDER_SYSTEM, RenderSystem.LINES, true/*to set them to "on"*/);
 		
 		// < The Loop >
 		double frameBegin;

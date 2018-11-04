@@ -149,6 +149,9 @@ public class GraphicsLoader {
 					}
 				}
 			}
+			for(Integer f : indices) {
+				System.out.println(f);
+			}
 			Mesh mesh = new Mesh(
 					MiscUtility.toFloatArray(vertices),
 					MiscUtility.toFloatArray(texCoords),

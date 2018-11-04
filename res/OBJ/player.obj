@@ -1,5 +1,6 @@
 # Blender v2.67 (sub 0) OBJ File: 'person.blend'
 # www.blender.org
+mtllib player.mtl
 o Cube
 v 1.000000 8.652402 -0.877620
 v 1.000000 8.652402 1.000000
