@@ -25,31 +25,24 @@ import com.mokiat.data.front.parser.OBJParser;
 import com.mokiat.data.front.parser.OBJTexCoord;
 import com.mokiat.data.front.parser.OBJVertex;
 
-import example.AssetData;
 import render.DirectionalLight;
 import skybox.Skybox;
-import terrain.Terrain;
-import terrain.TerrainMesh;
 import textures.Material;
-import textures.MultiTexture;
-import textures.Texture;
 import utility.MiscUtility;
 import wrapper.ModelData;
-import wrapper.RawMesh;
 
 /*
  * Textures & Meshes
  */
 public class GraphicsLoader {
 	
-	private static final String MATERIAL_DIRECTORY = "./res/texures/";
-	private static final String MODEL_DIRECTORY = "./res/models/";
+	private static final String MATERIAL_DIRECTORY = "./res/MTL/";
+	private static final String MODEL_DIRECTORY = "./res/OBJ/";
 	
 	private final MaterialLoader materialLoader;
 	private final CubeMapLoader cubeMapLoader;
 	
 	private final MeshLoader modelLoader;
-	private final TerrainMeshLoader terrainMeshLoader;
 	
 	private final OBJLoader objLoader;
 	
@@ -58,11 +51,6 @@ public class GraphicsLoader {
 	private HashMap<String, Mesh> meshes = new HashMap<>();
 	private HashMap<String, Material> materials = new HashMap<>();
 	// ---
-	
-	private HashMap<String, Integer> pointerCounter3D = new HashMap<>();
-	private HashMap<String, AssetData> assets3D = new HashMap<>();
-	
-	private Terrain terrain = null;
 	
 	private Skybox skybox = null;
 	
@@ -73,8 +61,22 @@ public class GraphicsLoader {
 		materialLoader = new MaterialLoader();
 		cubeMapLoader = new CubeMapLoader();
 		modelLoader = new MeshLoader();
-		terrainMeshLoader = new TerrainMeshLoader(modelLoader);
 		objLoader = new OBJLoader();
+	}
+	
+	public void cleanUp() {
+		for(Mesh mesh: meshes.values()) {
+			mesh.deleteFromVideoMemory();
+		}
+		for(Material material : materials.values()) {
+			material.deleteFromVideoMemory();
+		}
+		models.clear();
+		meshes.clear();
+		materials.clear();
+		
+		unloadSun();
+		unloadSkybox();
 	}
 	
 	public Model getModel(String ressourceName) {
@@ -88,13 +90,13 @@ public class GraphicsLoader {
 		final IOBJParser objParser = new OBJParser();
 		final IMTLParser mtlParser = new MTLParser();
 		
-		try (InputStream inputStream = new FileInputStream(resourceName)) {
+		try (InputStream inputStream = new FileInputStream(MODEL_DIRECTORY + resourceName + ".obj")) {
 			// parse model
-			final OBJModel model = objParser.parse(inputStream);
+			final OBJModel objModel = objParser.parse(inputStream);
 			
 			// extract all the materials used by this model
-			for(String libraryReference : model.getMaterialLibraries()) {
-				final InputStream mtlStream = new FileInputStream(libraryReference);
+			for(String libraryReference : objModel.getMaterialLibraries()) {
+				final InputStream mtlStream = new FileInputStream(MATERIAL_DIRECTORY + libraryReference);
 				final MTLLibrary mtlLibrary = mtlParser.parse(mtlStream);
 				for(MTLMaterial mtlMaterial : mtlLibrary.getMaterials()) {
 					// check if a material has been loaded already
@@ -115,25 +117,25 @@ public class GraphicsLoader {
 			final ArrayList<Float> texCoords = new ArrayList<>();
 			final ArrayList<Integer> indices = new ArrayList<>();
 			// Vertices
-			for(OBJVertex objVertex : model.getVertices()) {
+			for(OBJVertex objVertex : objModel.getVertices()) {
 				vertices.add(objVertex.x);
 				vertices.add(objVertex.y);
 				vertices.add(objVertex.z);
 			}
 			// Normals
-			for(OBJNormal objNormal : model.getNormals()) {
+			for(OBJNormal objNormal : objModel.getNormals()) {
 				normals.add(objNormal.x);
 				normals.add(objNormal.y);
 				normals.add(objNormal.z);
 			}
 			// Texture Coordinates
-			for(OBJTexCoord objTexCoord : model.getTexCoords()) {
+			for(OBJTexCoord objTexCoord : objModel.getTexCoords()) {
 				texCoords.add(objTexCoord.u);
 				texCoords.add(objTexCoord.v);
 				// texCoords.add(objTexCoord.w);
 			}
 			// Indices
-			for(OBJObject objObject: model.getObjects()) {
+			for(OBJObject objObject: objModel.getObjects()) {
 				for(OBJMesh objMesh : objObject.getMeshes()) {
 					for(OBJFace objFace : objMesh.getFaces()) {
 						for(OBJDataReference dataRef : objFace.getReferences()) {
@@ -155,13 +157,16 @@ public class GraphicsLoader {
 					);
 			mesh.loadToVideoMemory();
 			meshes.put(resourceName, mesh);
+			
+			// assemble Model wrapper
+			Model model = new Model(mesh, materials.get(resourceName +".mtl"));
+			models.put(resourceName, model);
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//model.refCountUp();
 	}
 	
 	public void unloadModel(String ressourceName) {
@@ -174,75 +179,6 @@ public class GraphicsLoader {
 		}
 	}
 	
-	public AssetData getRessource(String assetName){
-		return assets3D.get(assetName);
-	}
-	
-	public void load(String assetName){
-		if(!pointerCounter3D.containsKey(assetName) || pointerCounter3D.get(assetName) == 0){
-			// load fresh from HDD
-			ModelData modelData = objLoader.loadOBJ(assetName);
-			RawMesh rawMesh = modelLoader.loadToVAO(
-					modelData.getVertices(),
-					modelData.getIndices(),
-					modelData.getTextureCoords(),
-					modelData.getNormals());
-			// random hardcoded default value for shininess = 1
-			Material material = materialLoader.loadMaterial(assetName, 1.0f);
-			AssetData newAsset = new AssetData(rawMesh, material);
-			assets3D.put(assetName, newAsset);
-			pointerCounter3D.put(assetName, 1);
-		}
-	}
-	
-	public void unload(String assetName){
-		if (!pointerCounter3D.containsKey(assetName)) {
-			return;
-		}
-		
-		int x = pointerCounter3D.get(assetName);
-		if(x == 1){
-			pointerCounter3D.put(assetName, x--);
-			//unload completely
-			// TODO Clean up on sound deletion
-			// ^ what does this mean? :S
-			assets3D.put(assetName, null);
-		}else{
-			pointerCounter3D.put(assetName, x--);
-		}
-	}
-	
-	// grab an already loaded Terrain
-	public Terrain getTerrain(){
-		return terrain;
-	}
-	
-	// There can only ever be one one terrain active and loaded for now
-	public Terrain loadTerrain(int size, int maxHeight, String heightMap, String[] drgb, String blendMap){
-		// unload whatever Terrain was loaded before
-		unloadTerrain();
-		// build TerrainMesh
-		TerrainMesh terrainMesh = terrainMeshLoader.loadTerrainMesh(heightMap, maxHeight, size);
-		// build MultiTexture
-		String d = "_diffuse";
-		String n = "_normal";
-		String[] drgb_n = {drgb[0] + d, drgb[1] + d, drgb[2] + d, drgb[3] + d, 
-				drgb[0] + n, drgb[1] + n, drgb[2] + n, drgb[3] + n, 
-		};
-		MultiTexture multiTexture = materialLoader.loadMultiTexture(drgb_n[0], drgb_n[1], drgb_n[2], drgb_n[3], 
-				drgb_n[4], drgb_n[5], drgb_n[6], drgb_n[7]);
-		// load blendMap
-		Texture blendMapTexture = materialLoader.loadBlendMap(blendMap);
-		// bundle together and return
-		terrain = new Terrain(terrainMesh, multiTexture, blendMapTexture);
-		return terrain;
-	}
-	
-	public void unloadTerrain(){
-		// blah blah delete stuff
-		terrain = null;
-	}
-	
 	// grab an already loaded Skybox
 	public Skybox getSkybox(){
 		return skybox;
@@ -251,7 +187,6 @@ public class GraphicsLoader {
 	// There can only ever be one skybox active and loaded for now
 	public Skybox loadSkybox(float size, String skyboxName){
 		// unload whatever Terrain was loaded before
-		unloadTerrain();
 		// build cube vertices
 		float[] vertices = {        
 		    -size,  size, -size,

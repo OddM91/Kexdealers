@@ -26,7 +26,6 @@ import ecs.Transformable;
 import loaders.BlueprintLoader;
 import loaders.GraphicsLoader;
 import skybox.SkyboxRenderer;
-import terrain.TerrainRenderer;
 import ui.LineRenderer;
 
 public class RenderSystem extends AbstractSystem {
@@ -39,7 +38,6 @@ public class RenderSystem extends AbstractSystem {
 	private final GraphicsLoader graphicsLoader;
 	
 	private final EntityRenderer entityRenderer;
-	private final TerrainRenderer terrainRenderer;
 	private final SkyboxRenderer skyboxRenderer;
 	private final LineRenderer lineRenderer;
 	
@@ -74,7 +72,6 @@ public class RenderSystem extends AbstractSystem {
 		graphicsLoader = new GraphicsLoader();
 		
 		entityRenderer = new EntityRenderer();
-		terrainRenderer = new TerrainRenderer();
 		skyboxRenderer = new SkyboxRenderer();
 		lineRenderer = new LineRenderer();
 	}
@@ -85,9 +82,6 @@ public class RenderSystem extends AbstractSystem {
 		
 		// update :)
 		update();
-		
-		// cleanUp on program exit
-		// cleanUp();
 	}
 	
 	@Override
@@ -144,16 +138,6 @@ public class RenderSystem extends AbstractSystem {
 		graphicsLoader.loadSkybox(
 				Float.valueOf(frags[0]),
 				frags[1]);
-		// Terrain
-		String terrainData = BlueprintLoader.getLineWith("TERRAIN", blueprint);
-		frags = BlueprintLoader.getDataFragments(terrainData);
-		String[] drgb = {frags[4], frags[5], frags[6], frags[7]};
-		graphicsLoader.loadTerrain(
-				Integer.valueOf(frags[0]), 
-				Integer.valueOf(frags[1]), 
-				frags[2], 
-				drgb, 
-				frags[3]);
 		// Sun
 		String sunData = BlueprintLoader.getLineWith("SUN", blueprint);
 		frags = BlueprintLoader.getDataFragments(sunData);
@@ -204,7 +188,7 @@ public class RenderSystem extends AbstractSystem {
 		if(entitiesToRender.get(assetName) == null){
 			entitiesToRender.put(assetName, new HashSet<Transformable>());
 			// add +1 to pointer count for this asset
-			graphicsLoader.load(assetName);
+			graphicsLoader.loadModel(assetName);
 		}
 		entitiesToRender.get(assetName).add(entityController.getTransformable(eID));
 	}
@@ -221,7 +205,7 @@ public class RenderSystem extends AbstractSystem {
 				break;
 			}
 		}
-		graphicsLoader.unload(assetName);
+		graphicsLoader.unloadModel(assetName);
 		// Make change "official"
 		entityController.removeRenderable(eID);
 	}
@@ -237,9 +221,7 @@ public class RenderSystem extends AbstractSystem {
 		prepareForRendering();
 		
 		skyboxRenderer.render(graphicsLoader, camera);
-		
-		terrainRenderer.render(graphicsLoader, camera, entityController.getPointLightComponents());
-		
+				
 		entityRenderer.render(graphicsLoader, camera, entitiesToRender, entityController.getPointLightComponents());
 		
 		if (drawDebugLines) {

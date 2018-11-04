@@ -17,8 +17,6 @@ import com.mokiat.data.front.parser.MTLColor;
 import com.mokiat.data.front.parser.MTLMaterial;
 
 import textures.Material;
-import textures.MultiTexture;
-import textures.Texture;
 
 public class MaterialLoader {
 	
@@ -90,31 +88,6 @@ public class MaterialLoader {
 		return new Material(name, ambient, diffuse, specular, transmission,
 				ambientID, diffuseID, specularID, specularExponentID, dissolveID,
 				dissolve, specularExponent);
-	}
-	
-	public Material loadMaterial(String filename, float shininess){
-		Texture2D diffuse = loadTexture2D(filename +"_diffuse", true);
-		Texture2D specular = loadTexture2D(filename +"_specular", false);
-		return new Material(diffuse.getID(), specular.getID(), shininess, diffuse.getWidth(), diffuse.getHeight());
-	}
-	
-	public MultiTexture loadMultiTexture(String defTexture, String rTex, String gTex, String bTex,
-			String defTextureN, String rTexN, String gTexN, String bTexN){
-		Texture2D def = loadTexture2D(defTexture, true);
-		Texture2D r = loadTexture2D(rTex, true);
-		Texture2D g = loadTexture2D(gTex, true);
-		Texture2D b = loadTexture2D(bTex, true);
-		// Normal Maps
-		Texture2D def_n = loadTexture2D(defTextureN, false);
-		Texture2D r_n = loadTexture2D(rTexN, false);
-		Texture2D g_n = loadTexture2D(gTexN, false);
-		Texture2D b_n = loadTexture2D(bTexN, false);
-		return new MultiTexture(def.getID(), r.getID(), g.getID(), b.getID(),
-				def_n.getID(), r_n.getID(), g_n.getID(), b_n.getID());
-	}
-	
-	public Texture loadBlendMap(String filename){
-		return new Texture(loadTexture2D(filename, false).getID());
 	}
 	
 	private Texture2D loadTexture2D(String filename, boolean gammaCorrected){

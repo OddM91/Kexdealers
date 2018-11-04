@@ -1,6 +1,6 @@
 # Blender v2.76 (sub 0) OBJ File: 'Animated Human.blend'
 # www.blender.org
-mtllib Animated Human.mtl
+mtllib AnimatedHuman.mtl
 o Human_Mesh_Human_CylinderMesh.003
 v 0.089346 4.323843 0.452144
 v 0.096809 4.247827 0.396028

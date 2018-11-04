@@ -41,12 +41,6 @@ public class Material {
 		this.dissolve = dissolve;
 		this.specularExponent = specularExponent;
 	}
-
-	// TODO old constructor
-	public Material(int diffuseID, int specularID, float shininess, int width, int height) {
-		this.diffuseID = diffuseID;
-		this.specularID = specularID;
-	}
 	
 	public void refCountUp() {
 		referenceCounter++;

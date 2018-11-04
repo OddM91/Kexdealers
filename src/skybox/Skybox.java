@@ -3,11 +3,9 @@ package skybox;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import wrapper.RawMesh;
-
 public class Skybox {
 	
-	private RawMesh mesh;
+	private SkyboxMesh mesh;
 	private int textureID;
 	
 	private float speed = 0.01f;
@@ -15,7 +13,7 @@ public class Skybox {
 	
 	private Matrix4f modelMatrix = new Matrix4f();
 	
-	public Skybox(RawMesh mesh, int textureID){
+	public Skybox(SkyboxMesh mesh, int textureID){
 		this.mesh = mesh;
 		this.textureID = textureID;
 	}
@@ -24,7 +22,7 @@ public class Skybox {
 		modelMatrix.rotate(speed * delta, axis);
 	}
 
-	public RawMesh getMesh(){
+	public SkyboxMesh getMesh(){
 		return mesh;
 	}
 

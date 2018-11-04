@@ -1,17 +1,13 @@
 package loaders;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
 import textures.Material;
 
 public class Model {
 	
 	private int referenceCounter = 0;
 	
-	private Mesh mesh;
-	private Material material;
+	private final Mesh mesh;
+	private final Material material;
 	
 	public Model(Mesh mesh, Material material) {
 		this.mesh = mesh;

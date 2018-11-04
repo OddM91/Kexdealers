@@ -1,11 +1,11 @@
-package wrapper;
+package skybox;
 
-public class RawMesh {
+public class SkyboxMesh {
 	
 	private int vaoID;
 	private int vertexCount;
 	
-	public RawMesh(int vaoID, int vertexCount){
+	public SkyboxMesh(int vaoID, int vertexCount){
 		this.vaoID = vaoID;
 		this.vertexCount = vertexCount;
 	}
@@ -17,5 +17,4 @@ public class RawMesh {
 	public int getVertexCount(){
 		return vertexCount;
 	}
-	
 }

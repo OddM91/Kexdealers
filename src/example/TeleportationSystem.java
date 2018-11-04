@@ -34,8 +34,6 @@ public class TeleportationSystem extends AbstractSystem {
 
 		// update :)
 		update();
-
-		// cleanUp();
 	}
 
 	@Override
@@ -74,8 +72,8 @@ public class TeleportationSystem extends AbstractSystem {
 	}
 
 	@Override
-	protected void cleanUp() {
-
+	public void cleanUp() {
+		teleportations.clear();
 	}
 
 	@Override
