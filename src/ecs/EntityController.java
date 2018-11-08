@@ -5,8 +5,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class EntityController {
-
-	private final HashMap<Integer, ArrayList<String>> entities = new HashMap<>();
+	
+	public enum CompType {
+		TRANSFORMABLE,
+		RENDERABLE,
+		POINTLIGHTCOMPONENT,
+		AUDIOSOURCECOMPONENT,
+		FPPCAMERACOMPONENT,
+		PLAYERCONTROLLERCOMPONENT,
+		PHYSICSCOMPONENT,
+		INVENTORYCOMPONENT
+	}
+	
+	private final HashMap<Integer, ArrayList<CompType>> entities = new HashMap<>();
 
 	private final HashMap<Integer, Transformable> transformable = new HashMap<>();
 	private final HashMap<Integer, Renderable> renderable = new HashMap<>();
@@ -15,6 +26,7 @@ public class EntityController {
 	private final HashMap<Integer, FPPCameraComponent> fppCameraComponent = new HashMap<>();
 	private final HashMap<Integer, PlayerControllerComponent> playerControllerComponent = new HashMap<>();
 	private final HashMap<Integer, PhysicsComponent> physicsComponent = new HashMap<>();
+	private final HashMap<Integer, InventoryComponent> inventoryComponent = new HashMap<>();
 	
 	// --- eID de-/allocation ---
 	
@@ -25,8 +37,8 @@ public class EntityController {
 		}
 		// Initialize the entity 
 		// Transformable must always exist for each entity.
-		ArrayList<String> comps = new ArrayList<String>();
-		comps.add("transformable");
+		ArrayList<CompType> comps = new ArrayList<CompType>();
+		comps.add(CompType.TRANSFORMABLE);
 		entities.put(i, comps);
 		addTransformable(i);
 		return i;
@@ -40,72 +52,80 @@ public class EntityController {
 	public void directAllocEID(int eID) {
 		// Initialize the entity 
 		// Transformable must always exist for each entity.
-		ArrayList<String> comps = new ArrayList<String>();
-		comps.add("transformable");
+		ArrayList<CompType> comps = new ArrayList<CompType>();
+		comps.add(CompType.TRANSFORMABLE);
 		entities.put(eID, comps);
 		addTransformable(eID);
 	}
 	// --- ADDERS ---
 	
 	public Transformable addTransformable(int eID){// TODO: Make not required
-		entities.get(eID).add("transformable");
+		entities.get(eID).add(CompType.TRANSFORMABLE);
 		Transformable comp = new Transformable(eID);
 		transformable.put(eID, comp);
 		return comp;
 	}
 	
 	public Renderable addRenderable(int eID){
-		entities.get(eID).add("renderable");
+		entities.get(eID).add(CompType.RENDERABLE);
 		Renderable comp = new Renderable(eID);
 		renderable.put(eID, comp);
 		return comp;
 	}
 	
 	public PointLightComponent addPointLightComponent(int eID){
-		entities.get(eID).add("pointlightcomponent");
+		entities.get(eID).add(CompType.POINTLIGHTCOMPONENT);
 		PointLightComponent comp = new PointLightComponent(eID);
 		pointLightComponent.put(eID, comp);
 		return comp;
 	}
 	
 	public AudioSourceComponent addAudioSourceComponent(int eID) {
-		entities.get(eID).add("audiosourcecomponent");
+		entities.get(eID).add(CompType.AUDIOSOURCECOMPONENT);
 		AudioSourceComponent comp = new AudioSourceComponent(eID);
 		audioSourceComponent.put(eID, comp);
 		return comp;
 	}
 	
 	public FPPCameraComponent addFPPCameraComponent(int eID) {
-		entities.get(eID).add("fppcameracomponent");
+		entities.get(eID).add(CompType.FPPCAMERACOMPONENT);
 		FPPCameraComponent comp = new FPPCameraComponent(eID);
 		fppCameraComponent.put(eID, comp);
 		return comp;
 	}
 	
 	public PlayerControllerComponent addPlayerControllerComponent(int eID) {
-		entities.get(eID).add("playercontrollercomponent");
+		entities.get(eID).add(CompType.PLAYERCONTROLLERCOMPONENT);
 		PlayerControllerComponent comp = new PlayerControllerComponent(eID);
 		playerControllerComponent.put(eID, comp);
 		return comp;
 	}
 	
 	public PhysicsComponent addPhysicsComponent(int eID) {
-		entities.get(eID).add("physicscomponent");
+		entities.get(eID).add(CompType.PHYSICSCOMPONENT);
 		PhysicsComponent comp = new PhysicsComponent(eID);
 		physicsComponent.put(eID, comp);
 		return comp;
 	}
 	
-	public void addComponentOfType(int eID, String type, Component component) {
+	public InventoryComponent addInventoryComponent(int eID) {
+		entities.get(eID).add(CompType.INVENTORYCOMPONENT);
+		InventoryComponent comp = new InventoryComponent(eID);
+		inventoryComponent.put(eID, comp);
+		return comp;
+	}
+	
+	public void addComponentOfType(int eID, CompType type, Component component) {
 		component.setEID(eID);
 		switch (type){
-			case "transformable": transformable.put(eID, (Transformable) component); break;
-			case "renderable": renderable.put(eID, (Renderable) component); break;
-			case "pointlightcomponent": pointLightComponent.put(eID, (PointLightComponent) component); break;
-			case "audiosourcecomponent": audioSourceComponent.put(eID, (AudioSourceComponent) component); break;
-			case "fppcameracomponent": fppCameraComponent.put(eID, (FPPCameraComponent) component); break;
-			case "playercontrollercomponent": playerControllerComponent.put(eID, (PlayerControllerComponent) component); break;
-			case "physicscomponent": physicsComponent.put(eID, (PhysicsComponent) component); break;
+			case TRANSFORMABLE: transformable.put(eID, (Transformable) component); break;
+			case RENDERABLE: renderable.put(eID, (Renderable) component); break;
+			case POINTLIGHTCOMPONENT: pointLightComponent.put(eID, (PointLightComponent) component); break;
+			case AUDIOSOURCECOMPONENT: audioSourceComponent.put(eID, (AudioSourceComponent) component); break;
+			case FPPCAMERACOMPONENT: fppCameraComponent.put(eID, (FPPCameraComponent) component); break;
+			case PLAYERCONTROLLERCOMPONENT: playerControllerComponent.put(eID, (PlayerControllerComponent) component); break;
+			case PHYSICSCOMPONENT: physicsComponent.put(eID, (PhysicsComponent) component); break;
+			case INVENTORYCOMPONENT: inventoryComponent.put(eID, (InventoryComponent) component); break;
 			default: System.err.println("Failed to add component of type " + type + " to entity " + eID + "! Unknown type!");
 		}
 	}
@@ -113,52 +133,58 @@ public class EntityController {
 	// --- REMOVERS ---
 	
 	public Transformable removeTransformable(int eID){// Will probably crash the engine
-		entities.get(eID).remove("transformable");
+		entities.get(eID).remove(CompType.TRANSFORMABLE);
 		return transformable.remove(eID);
 	}
 	
 	public Renderable removeRenderable(int eID){
-		entities.get(eID).remove("renderable");
+		entities.get(eID).remove(CompType.RENDERABLE);
 		return renderable.remove(eID);
 	}
 	
 	public PointLightComponent removePointLightComponent(int eID){
-		entities.get(eID).remove("pointlightcomponent");
+		entities.get(eID).remove(CompType.POINTLIGHTCOMPONENT);
 		return pointLightComponent.remove(eID);
 	}
 	
 	public AudioSourceComponent removeAudioSourceComponent(int eID) {
-		entities.get(eID).remove("audiosourcecomponent");
+		entities.get(eID).remove(CompType.AUDIOSOURCECOMPONENT);
 		return audioSourceComponent.remove(eID);
 	}
 	
 	public FPPCameraComponent removeFPPCameraComponent(int eID) {
-		entities.get(eID).remove("fppcameracomponent");
+		entities.get(eID).remove(CompType.FPPCAMERACOMPONENT);
 		return fppCameraComponent.remove(eID);
 	}
 	
 	public PlayerControllerComponent removePlayerControllerComponent(int eID) {
-		entities.get(eID).remove("playercontrollercomponent");
+		entities.get(eID).remove(CompType.PLAYERCONTROLLERCOMPONENT);
 		return playerControllerComponent.remove(eID);
 	}
 	
 	public PhysicsComponent removePhysicsComponent(int eID) {
-		entities.get(eID).remove("physicscomponent");
+		entities.get(eID).remove(CompType.PHYSICSCOMPONENT);
 		return physicsComponent.remove(eID);
 	}
 	
-	public Component removeComponentOfType(int eID, String type) {
+	public InventoryComponent removeInventoryComponent(int eID) {
+		entities.get(eID).remove(CompType.INVENTORYCOMPONENT);
+		return inventoryComponent.remove(eID);
+	}
+	
+	public Component removeComponentOfType(int eID, CompType type) {
 		if(!hasComponent(eID, type)) {
 			return null;
 		}else {
 			switch (type){
-				case "transformable": return removeTransformable(eID);
-				case "renderable": return removeRenderable(eID);
-				case "pointlightcomponent": return removePointLightComponent(eID);
-				case "audiosourcecomponent": return removeAudioSourceComponent(eID);
-				case "fppcameracomponent": return removeFPPCameraComponent(eID);
-				case "playercontrollercomponent": return removePlayerControllerComponent(eID);
-				case "physicscomponent": return removePhysicsComponent(eID);
+				case TRANSFORMABLE: return removeTransformable(eID);
+				case RENDERABLE: return removeRenderable(eID);
+				case POINTLIGHTCOMPONENT: return removePointLightComponent(eID);
+				case AUDIOSOURCECOMPONENT: return removeAudioSourceComponent(eID);
+				case FPPCAMERACOMPONENT: return removeFPPCameraComponent(eID);
+				case PLAYERCONTROLLERCOMPONENT: return removePlayerControllerComponent(eID);
+				case PHYSICSCOMPONENT: return removePhysicsComponent(eID);
+				case INVENTORYCOMPONENT: return removeInventoryComponent(eID);
 				default: System.err.println("Failed to remove component of type " + type + " from entity " + eID + "! Unknown type!"); return null;
 			}
 		}
@@ -221,18 +247,27 @@ public class EntityController {
 		return new HashSet<PhysicsComponent>(physicsComponent.values());
 	}
 	
-	public Component getComponentOfType(int eID, String type) {
+	public InventoryComponent getInventoryComponent(int eID) {
+		return inventoryComponent.get(eID);
+	}
+	
+	public HashSet<InventoryComponent> getInventoryComponents(){
+		return new HashSet<InventoryComponent>(inventoryComponent.values());
+	}
+	
+	public Component getComponentOfType(int eID, CompType type) {
 		if(!hasComponent(eID, type)) {
 			return null;
 		}else {
 			switch (type){
-				case "transformable": return getTransformable(eID);
-				case "renderable": return getRenderable(eID);
-				case "pointlightcomponent": return getPointLightComponent(eID);
-				case "audiosourcecomponent": return getAudioSourceComponent(eID);
-				case "fppcameracomponent": return getFPPCameraComponent(eID);
-				case "playercontrollercomponent": return getPlayerControllerComponent(eID);
-				case "physicscomponent": return getPhysicsComponent(eID);
+				case TRANSFORMABLE: return getTransformable(eID);
+				case RENDERABLE: return getRenderable(eID);
+				case POINTLIGHTCOMPONENT: return getPointLightComponent(eID);
+				case AUDIOSOURCECOMPONENT: return getAudioSourceComponent(eID);
+				case FPPCAMERACOMPONENT: return getFPPCameraComponent(eID);
+				case PLAYERCONTROLLERCOMPONENT: return getPlayerControllerComponent(eID);
+				case PHYSICSCOMPONENT: return getPhysicsComponent(eID);
+				case INVENTORYCOMPONENT: return getInventoryComponent(eID);
 				default: System.err.println("Failed to get component of type " + type + " from entity " + eID + "! Unknown type!"); return null;
 			}
 		}
@@ -240,11 +275,11 @@ public class EntityController {
 	
 	// --- QUERY ---
 	
-	public boolean hasComponent(int eID, String type){
+	public boolean hasComponent(int eID, CompType type){
 		return entities.get(eID).contains(type);
 	}
 	
-	public ArrayList<String> getComponentsFor(int eID) {
+	public ArrayList<CompType> getComponentsFor(int eID) {
 		return entities.get(eID);
 	}
 	
@@ -256,7 +291,7 @@ public class EntityController {
 	
 	public Entity emitEntity(int eID) {
 		// copy and delete components
-		ArrayList<String> componentTypes = entities.get(eID);
+		ArrayList<CompType> componentTypes = entities.get(eID);
 		Entity entity = new Entity(eID);
 		for(int i = 0; i < componentTypes.size(); i++) {
 			entity.addComponent(
@@ -269,7 +304,7 @@ public class EntityController {
 	}
 	
 	public Entity copyEntity(int eID) {
-		ArrayList<String> componentTypes = entities.get(eID);
+		ArrayList<CompType> componentTypes = entities.get(eID);
 		Entity entity = new Entity(eID);
 		for(int i = 0; i < componentTypes.size(); i++) {
 			entity.addComponent(
@@ -281,7 +316,7 @@ public class EntityController {
 	
 	public void integrateEntity(Entity entity) {
 		int newEID = allocEID();
-		ArrayList<String> componentTypes = entity.getComposition();
+		ArrayList<CompType> componentTypes = entity.getComposition();
 		for(int i = 0; i < componentTypes.size(); i++) {
 			addComponentOfType(
 					newEID, 

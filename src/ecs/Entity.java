@@ -6,14 +6,14 @@ public class Entity {
 	
 	private int eID;
 	
-	private ArrayList<String> componentTypes = new ArrayList<>();
+	private ArrayList<EntityController.CompType> componentTypes = new ArrayList<>();
 	private ArrayList<Component> components = new ArrayList<>();
 	
 	public Entity(int eID) {
 		this.eID = eID;
 	}
 	
-	public void addComponent(String type, Component component) {
+	public void addComponent(EntityController.CompType type, Component component) {
 		componentTypes.add(type);
 		components.add(component);
 	}
@@ -27,11 +27,11 @@ public class Entity {
 		return eID;
 	}
 	
-	public ArrayList<String> getComposition(){
+	public ArrayList<EntityController.CompType> getComposition(){
 		return componentTypes;
 	}
 	
-	public Component getComponentOfType(String type) {
+	public Component getComponentOfType(EntityController.CompType type) {
 		return components.get(componentTypes.indexOf(type));
 	}
 }
