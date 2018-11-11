@@ -14,6 +14,8 @@ import bus.MessageBus;
 import bus.Recipients;
 import ecs.AbstractSystem;
 import ecs.EntityController;
+import ics.InventorySystem;
+import ics.ItemController;
 import input.InputMapper;
 import loaders.BlueprintLoader;
 import physics.PhysicsSystem;
@@ -41,6 +43,10 @@ public class LinkStart implements Runnable{
 	// op codes
 	public static final int SHUTDOWN = 0;
 	
+	// TIME
+	public static float FRAME_TIME = 0;
+	public static float FRAME_BEGIN = 0;
+	
 	public static void main(String[] args){
 		LinkStart link = new LinkStart();
 		link.start();
@@ -59,26 +65,24 @@ public class LinkStart implements Runnable{
 		// Window creation
 		//Display_old display = null;
 		Display display = null;
-		if (!headless) {
-			display = new Display(1920, 1080);
-			display.create();
-		}
+		display = new Display(1920, 1080);
+		display.create();
 		
 		// Managers
 		EntityController entityController = new EntityController();
+		ItemController itemController = new ItemController();
 		
 		// Message Bus
 		MessageBus messageBus = MessageBus.getInstance();
 
 		// Systems - Create a System here if you want to use it :)
-		if (!headless) {
-			systems.put("RenderSystem", new RenderSystem(messageBus, entityController, display));
-		}
+		systems.put("RenderSystem", new RenderSystem(messageBus, entityController, display));
 		systems.put("TeleportationSystem", new TeleportationSystem(messageBus, entityController));
 		systems.put("NetworkSystem", new NetworkSystem(messageBus, entityController));
 		systems.put("AudioSystem", new AudioSystem(messageBus, entityController));
 		systems.put("PhysicsSystem", new PhysicsSystem(messageBus, entityController));
 		systems.put("PlayerSystem", new PlayerSystem(messageBus, entityController));
+		systems.put("InventorySystem", new InventorySystem(messageBus, entityController, itemController));
 		
 		InputMapper inputMapper = new InputMapper(display, messageBus);
 		
@@ -112,33 +116,6 @@ public class LinkStart implements Runnable{
 				Thread netSysThread = new Thread(networkSystem, "network_system");
 				netSysThread.start();
 				ArrayList<String> blueprint = systems.get("NetworkSystem").loadInstanceFromServer(); // hmm
-				// Entities
-				String entityIDs = BlueprintLoader.getLineWith("ENTITIES", blueprint);
-				for(String frag : BlueprintLoader.getDataFragments(entityIDs)){
-					entityController.directAllocEID(Integer.valueOf(frag));
-				} 
-				// - Transformable
-				ArrayList<String> transformableData = BlueprintLoader.getAllLinesWith("TRANSFORMABLE", blueprint);
-				String[] frags = null;
-				for(String dataSet : transformableData){
-					int eID = BlueprintLoader.extractEID(dataSet);
-					frags = BlueprintLoader.getDataFragments(dataSet);
-					Vector3f position = new Vector3f(Float.valueOf(frags[0]), Float.valueOf(frags[1]), Float.valueOf(frags[2]));
-					float rotX = Float.valueOf(frags[3]);
-					float rotY = Float.valueOf(frags[4]);
-					float rotZ = Float.valueOf(frags[5]);
-					float scale = Float.valueOf(frags[6]);
-					entityController.getTransformable(eID)
-						.setPosition(position)
-						.setRotX(rotX)
-						.setRotY(rotY)
-						.setRotZ(rotZ)
-						.setScale(scale);
-				}
-				// Components are loaded by their system
-				for(AbstractSystem system : systems.values()) {
-					system.loadBlueprint(blueprint);
-				}
 				*/
 			}
 		}
@@ -173,17 +150,14 @@ public class LinkStart implements Runnable{
 			}
 		}
 		
-		messageBus.messageSystem(Recipients.RENDER_SYSTEM, 0/*debug lines*/, true/*to set them to "on"*/);
-		((AudioSystem) systems.get("AudioSystem")).playEntitySound(8);
-		
 		// Lucy's fix
 		messageBus.messageSystem(Recipients.RENDER_SYSTEM, RenderSystem.WIREFRAME, false);
 		
 		// < The Loop >
-		double frameBegin;
 		while(running){
 			
-			frameBegin = GLFW.glfwGetTime();
+			FRAME_BEGIN = (float) GLFW.glfwGetTime();
+			
 			// Process messages
 			Message message;
 			while((message = messageBus.getNextMessage(Recipients.MAIN)) != null) {
@@ -199,7 +173,7 @@ public class LinkStart implements Runnable{
 			
 			}
 			
-			// World update
+			// Input
 			inputMapper.updateInput();
 			
 			// Teleport
@@ -211,33 +185,26 @@ public class LinkStart implements Runnable{
 			// Physics
 			systems.get("PhysicsSystem").run();
 			
-			if (!headless) { 
-				// Audio
-				systems.get("AudioSystem").run();
-				
-				// Render
-				systems.get("RenderSystem").run();
-				
-				if(GLFW.glfwWindowShouldClose(display.window)){
-					running = false;
-				}
+			// Audio
+			systems.get("AudioSystem").run();
+			
+			// Render
+			systems.get("RenderSystem").run();
+			
+			if(GLFW.glfwWindowShouldClose(display.window)){
+				running = false;
 			}
 			
-			if (tickCounter == 200) {
-				//((AudioSystem) systems.get("AudioSystem")).playEntitySound(8);
-			}
-			
-			timeDelta = glfwGetTime() - frameBegin;
+			FRAME_TIME = (float) GLFW.glfwGetTime() - FRAME_BEGIN;
 			
 			if (tickCounter % (targetFPS*2) == 0) {
-				System.out.println((Math.floor(1000 / timeDelta)) / 1000 + " FPS");
+				System.out.println((Math.floor(1000 / FRAME_TIME)) / 1000 + " FPS");
 			}
 			tickCounter++;
 		}
-			
-		if (!headless) {
-			display.destroy();
-		}
+		
+		display.destroy();
+		
 		if(online) {
 			messageBus.messageSystem(Recipients.NETWORK_SYSTEM, NetworkSystem.DISCONNECT, null);
 		}

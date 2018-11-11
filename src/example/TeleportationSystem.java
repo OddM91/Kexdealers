@@ -35,9 +35,8 @@ public class TeleportationSystem extends AbstractSystem {
 
 	@Override
 	protected void update() {
-		super.timeMarkStart();
 
-		// work message queue
+		// process messages
 		Message message;
 		while ((message = messageBus.getNextMessage(Recipients.TELEPORTATION_SYSTEM)) != null) {
 			
@@ -53,8 +52,6 @@ public class TeleportationSystem extends AbstractSystem {
 				System.err.println("Teleportation operation not implemented");
 			}
 		}
-		// for all player entities,
-		// check all teleportations
 
 		for (FPPCameraComponent player : entityController.getFPPCameraComponents()) {
 			for (Teleportation tp : teleportations.values()) {
@@ -64,13 +61,11 @@ public class TeleportationSystem extends AbstractSystem {
 				}
 			}
 		}
-
-		super.timeMarkEnd();
 	}
 
 	@Override
 	public void cleanUp() {
-
+		
 	}
 
 	@Override
@@ -92,8 +87,6 @@ public class TeleportationSystem extends AbstractSystem {
 				System.err.printf("Teleportations: couldn't load teleportation. %s%n", e.toString());
 			}
 		}
-		
-		//System.out.println(teleportations.toString());
 	}
 
 	public Set<String> getAllTeleportations() {

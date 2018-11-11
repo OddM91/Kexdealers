@@ -23,7 +23,7 @@ public class PhysicsSystem extends AbstractSystem {
 	public static final int SET_FORCE = 0;
 	public static final int REMOVE_FORCE = 1;
 	
-	private static final Vector3f G_FORCE = new Vector3f(0, -98.1f, 0);
+	private static final Vector3f G_ACCEL = new Vector3f(0, -98.1f, 0).mul(100.0f);
 	private static final float ZERO_Y_HEIGHT = 0.0f;
 	private static final float GROUND_FRICTION = 0.2f;
 	
@@ -38,7 +38,6 @@ public class PhysicsSystem extends AbstractSystem {
 
 	@Override
 	public void update() {
-		super.timeMarkStart();
 		
 		// Process messages
 		Message message;
@@ -51,7 +50,6 @@ public class PhysicsSystem extends AbstractSystem {
 				// targetEID, forceName, vector
 				entityController.getPhysicsComponent((int) args[0])
 						.applyForce((String) args[1], (Vector3f) args[2]);
-				System.err.println("gravity!");
 				break;
 			case REMOVE_FORCE:
 				// targetEID, forceName
@@ -69,10 +67,12 @@ public class PhysicsSystem extends AbstractSystem {
 				
 				// Terrain collision
 				float terrainHeight = ZERO_Y_HEIGHT;
-				// TODO THIS FOLLOWING LINE MAKES GRAVITY WORK?????????
-				System.out.println(transformable.getPosition().y());
+
 				if (Float.compare(terrainHeight, transformable.getPosition().y()) >= 0) {
-					
+					// Whenever entity goes underneath terrain, teleport it back up.
+					// Gravity off!
+					comp.removeForce("gravity");
+					// Correct position
 					comp.setOnGround(true);
 					Vector3f pos = new Vector3f();
 					transformable.getPosition().add(0.0f, terrainHeight, 0.0f, pos);
@@ -82,14 +82,10 @@ public class PhysicsSystem extends AbstractSystem {
 					comp.setVelocity(vel);
 				} else {
 					comp.setOnGround(false);
+					// Gravity on!
+					comp.applyForce("gravity", (new Vector3f(G_ACCEL)).mul(comp.getWeight()));
 				}
 				
-				// Gravity
-				if (comp.isAffectedByGravity()) {
-					comp.applyForce("gravity", (new Vector3f(G_FORCE)).mul(comp.getWeight()));
-				} else {
-					comp.removeForce("gravity");
-				}
 				
 				// --- Apply Forces
 				// .. acceleration
@@ -98,7 +94,6 @@ public class PhysicsSystem extends AbstractSystem {
 				for (Vector3f force : comp.getAppliedForces()) {
 					totalForce.add(force);
 				}
-				/*
 				if (comp.isOnGround()) {
 					// simulate ground friction (too simple.)
 					// TODO rewrite this.
@@ -112,22 +107,20 @@ public class PhysicsSystem extends AbstractSystem {
 					frictionForce.mul(frictionFactor);
 					// ...and add modified effect of current velocity to total force
 					totalForce.add(frictionForce);
-				}*/
+				}
 				final Vector3f newAccel = totalForce.div(comp.getWeight());
 				comp.setAcceleration(newAccel);
 				
 				// .. velocity
-				final Vector3f newVelocity = newAccel.mul((float) super.getDeltaTime());
+				final Vector3f newVelocity = newAccel.mul(super.getFrameTimeMillis());
 				newVelocity.add(comp.getVelocity());
 				comp.setVelocity(newVelocity);
 				
 				// .. position
-				transformable.increasePosition(newVelocity.mul((float) super.getDeltaTime()));
+				transformable.increasePosition(newVelocity.mul(super.getFrameTimeMillis()));
 				
 			}
 		}
-
-		super.timeMarkEnd();
 	}
 
 	@Override
@@ -152,8 +145,9 @@ public class PhysicsSystem extends AbstractSystem {
 				
 				// extract data and add component
 				frags = BlueprintLoader.getDataFragments(dataSet);
-				entityController.addPhysicsComponent(eID).setWeight(Float.valueOf(frags[0]))
-						.setAffectedByGravity(Boolean.valueOf(frags[1]));
+				entityController.addPhysicsComponent(eID)
+						.setWeight(Float.valueOf(frags[0]))
+						.setAffectedByPhysics(Boolean.valueOf(frags[1]));
 				
 			} catch (NullPointerException | IndexOutOfBoundsException e) {
 				System.err.printf("Physics: couldn't load component for entity %d. Too few arguments.%n", eID);

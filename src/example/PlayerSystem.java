@@ -54,14 +54,13 @@ public class PlayerSystem extends AbstractSystem {
 
 	@Override
 	public void update() {
-		super.timeMarkStart();
 		
 		Vector2f inputMoveDir = new Vector2f();
 		Vector2f inputLookDir = new Vector2f();
 		boolean inputJump = false;
 		boolean inputInteract = false;
 		
-		// process message bus
+		// Process messages
 		Message message;
 		while((message = messageBus.getNextMessage(Recipients.PLAYER)) != null) {
 			
@@ -88,7 +87,7 @@ public class PlayerSystem extends AbstractSystem {
 		PhysicsComponent physics = entityController.getPhysicsComponent(PLAYER_ID);
 		// -- Poll input
 		Vector2f lookRot = new Vector2f(inputLookDir);
-		lookRot.mul((float) super.getDeltaTime() * 1000f);
+		lookRot.mul((float) super.getFrameTimeMillis());
 		
 		if (inputInteract) {
 			System.out.println("Player interacted");
@@ -127,13 +126,11 @@ public class PlayerSystem extends AbstractSystem {
 			// newCamPos.y = 0.0f;
 			camera.setPosition(newCamPos);
 		}
-		
-		super.timeMarkEnd();
 	}
 	
 	@Override
 	public void cleanUp() {
-		
+		// TODO Auto-generated method stub
 	}
 
 	@Override

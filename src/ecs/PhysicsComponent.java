@@ -16,7 +16,6 @@ public class PhysicsComponent extends Component {
 	private HashMap<String, Vector3f> listOfAppliedForces = new HashMap<>();
 
 	private boolean isAffectedByPhysics = true;
-	private boolean isAffectedByGravity = false;
 	private boolean isOnGround = false; // TODO replace with proper collision system
 
 	public PhysicsComponent(int eID) {
@@ -40,7 +39,6 @@ public class PhysicsComponent extends Component {
 				.setAcceleration(new Vector3f(acceleration))
 				.setWeight(this.weight)
 				.setAffectedByPhysics(this.isAffectedByPhysics)
-				.setAffectedByGravity(this.isAffectedByGravity)
 				.setOnGround(this.isOnGround);
 		for(Entry<String, Vector3f> force : listOfAppliedForces.entrySet()) {
 			deepCopy.applyForce(force.getKey(), force.getValue());
@@ -57,7 +55,6 @@ public class PhysicsComponent extends Component {
 		s.append(" A: ").append(acceleration.x).append("/").append(acceleration.y).append("/").append(acceleration.z);
 		s.append(" M: ").append(weight);
 		s.append(" Physics: ").append(isAffectedByPhysics);
-		s.append(" Gravity: ").append(isAffectedByGravity);
 		s.append(" Grounded: ").append(isOnGround);
 		for(Entry<String, Vector3f> force : listOfAppliedForces.entrySet()) {
 			s.append(" ").append(force.getKey()).append(": ");
@@ -117,7 +114,9 @@ public class PhysicsComponent extends Component {
 	}
 	
 	public PhysicsComponent applyForce(String forceName, Vector3f force) {
-		listOfAppliedForces.put(forceName, force);
+		if(!listOfAppliedForces.containsKey(forceName)) {
+			listOfAppliedForces.put(forceName, force);
+		}
 		return this;
 	}
 	
@@ -137,15 +136,6 @@ public class PhysicsComponent extends Component {
 
 	public PhysicsComponent setAffectedByPhysics(boolean isAffectedByPhysics) {
 		this.isAffectedByPhysics = isAffectedByPhysics;
-		return this;
-	}
-
-	public boolean isAffectedByGravity() {
-		return isAffectedByGravity;
-	}
-
-	public PhysicsComponent setAffectedByGravity(boolean isAffectedByGravity) {
-		this.isAffectedByGravity = isAffectedByGravity;
 		return this;
 	}
 

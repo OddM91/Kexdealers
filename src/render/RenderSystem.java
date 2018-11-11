@@ -81,19 +81,13 @@ public class RenderSystem extends AbstractSystem {
 	
 	@Override
 	public void run() {
-		// control update rate here
-		
-		// update :)
 		update();
-		
-		// cleanUp on program exit
-		// cleanUp();
 	}
 	
 	@Override
 	public void update() {
-		super.timeMarkStart();
-		// message queue
+		
+		// Process messages
 		Message message;
 		while((message = messageBus.getNextMessage(Recipients.RENDER_SYSTEM)) != null) {
 			
@@ -117,15 +111,13 @@ public class RenderSystem extends AbstractSystem {
 		}
 		
 		// update sky box rotation
-		graphicsLoader.getSkybox().updateRotation((float)super.getDeltaTime());
+		graphicsLoader.getSkybox().updateRotation((float)super.getFrameTimeMillis());
 		
 		// render scene
 		// Assumes that there is only one FPP camera component so the first one found is used.
 		Set<FPPCameraComponent> fppCamComps = entityController.getFPPCameraComponents();
 		FPPCameraComponent fppCamComp = fppCamComps.iterator().next();
 		renderScene(fppCamComp);
-		
-		super.timeMarkEnd();
 	}
 	
 	@Override
@@ -243,7 +235,7 @@ public class RenderSystem extends AbstractSystem {
 		entityRenderer.render(graphicsLoader, camera, entitiesToRender, entityController.getPointLightComponents());
 		
 		if (drawDebugLines) {
-			lineRenderer.render(camera, getDeltaTime());
+			lineRenderer.render(camera, getFrameTimeMillis());
 		}
 		
 		// Swap buffer to make changes visible

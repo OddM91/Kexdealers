@@ -31,8 +31,8 @@ public class InventorySystem extends AbstractSystem {
 
 	@Override
 	protected void update() {
-		super.timeMarkStart();
-		// message queue
+		
+		// process messages
 		Message message;
 		while((message = messageBus.getNextMessage(Recipients.INVENTORY_SYSTEM)) != null) {
 			
@@ -75,7 +75,5 @@ public class InventorySystem extends AbstractSystem {
 	public void loadBlueprint(ArrayList<String> blueprint) {
 		// :)		
 	}
-	
-	
 	
 }

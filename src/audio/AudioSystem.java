@@ -31,6 +31,11 @@ import loaders.BlueprintLoader;
 
 public class AudioSystem extends AbstractSystem {
 
+	// op codes
+	public static final int PLAY_SOUND = 0;
+	public static final int PAUSE_SOUND = 0;
+	public static final int STOP_SOUND = 0;
+	
 	private final AudioLoader audioLoader;
 
 	// OpenAL context
@@ -87,19 +92,11 @@ public class AudioSystem extends AbstractSystem {
 
 	@Override
 	public void run() {
-		// control update rate here
-
-		// update :)
 		update();
-
-		// cleanUp on program exit
-		// cleanUp();
 	}
 
 	@Override
 	public void update() {
-		super.timeMarkStart();
-
 		// TODO implement message bus
 
 		// Assumes that there is only one FPP camera component so the first one found is
@@ -134,8 +131,6 @@ public class AudioSystem extends AbstractSystem {
 		for (AudioSourceComponent comp : entityController.getAudioSourceComponents()) {
 			updateEntitySound(comp.getEID());
 		}
-		
-		super.timeMarkEnd();
 	}
 
 	@Override

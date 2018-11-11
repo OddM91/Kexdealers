@@ -5,15 +5,12 @@ import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 
 import bus.MessageBus;
+import example.LinkStart;
 
 public abstract class AbstractSystem {
 	
 	protected final MessageBus messageBus;
 	protected final EntityController entityController;
-	
-	protected int tickRate = 60;
-	private double tickTime = 1.0f / tickRate;
-	private double tickBegin;
 	
 	protected AbstractSystem(MessageBus messageBus, EntityController entityController) {
 		this.messageBus = messageBus;
@@ -39,18 +36,18 @@ public abstract class AbstractSystem {
 	 * Loads data from a blueprint file into the ECS
 	 */
 	public abstract void loadBlueprint(ArrayList<String> blueprint);
-	
-	// MUST be called at the beginning of update()
-	protected void timeMarkStart() {
-		tickBegin = GLFW.glfwGetTime();
+	/**
+	 * Returns current frame time in seconds
+	 * @return current frame time in seconds
+	 */
+	protected float getFrameTimeSecs() {
+		return LinkStart.FRAME_TIME / 1000;
 	}
-	
-	// MUST be called at the end of update()
-	protected void timeMarkEnd() {
-		tickTime = (GLFW.glfwGetTime() - tickBegin);
-	}
-	
-	protected double getDeltaTime() {
-		return Math.min(tickTime, 1.0f / tickRate);
+	/**
+	 * Returns current frame time in milliseconds
+	 * @return current frame time in milliseconds
+	 */
+	protected float getFrameTimeMillis() {
+		return LinkStart.FRAME_TIME;
 	}
 }
