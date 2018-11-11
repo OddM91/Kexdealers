@@ -30,12 +30,7 @@ public class TeleportationSystem extends AbstractSystem {
 
 	@Override
 	public void run() {
-		// control update rate here
-
-		// update :)
 		update();
-
-		// cleanUp();
 	}
 
 	@Override
@@ -74,7 +69,7 @@ public class TeleportationSystem extends AbstractSystem {
 	}
 
 	@Override
-	protected void cleanUp() {
+	public void cleanUp() {
 
 	}
 

@@ -77,20 +77,16 @@ public class SourceKeyboard implements InputSourceI {
 		Vector2f ret = new Vector2f();
 		
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LEFT)) == GLFW.GLFW_PRESS) {
-			ret.x += -1;
+			ret.x = -1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.FORWARD)) == GLFW.GLFW_PRESS) {
-			ret.y += 1;
+			ret.y = 1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.BACKWARD)) == GLFW.GLFW_PRESS) {
-			ret.y += -1;
+			ret.y = -1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.RIGHT)) == GLFW.GLFW_PRESS) {
-			ret.x += 1;
-		}
-		
-		if (Float.compare(ret.length(), 0) != 0) {
-			ret.normalize();
+			ret.x = 1;
 		}
 		
 		return ret;
@@ -120,20 +116,16 @@ public class SourceKeyboard implements InputSourceI {
 		Vector2f ret = new Vector2f();
 		
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_LEFT)) == GLFW.GLFW_PRESS) {
-			ret.x += -1;
+			ret.x = -1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_UP)) == GLFW.GLFW_PRESS) {
-			ret.y += 1;
+			ret.y = 1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_DOWN)) == GLFW.GLFW_PRESS) {
-			ret.y += -1;
+			ret.y = -1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_RIGHT)) == GLFW.GLFW_PRESS) {
-			ret.x += 1;
-		}
-		
-		if (Float.compare(ret.length(), 0) != 0) {
-			ret.normalize(5);
+			ret.x = 1;
 		}
 		
 		return ret;

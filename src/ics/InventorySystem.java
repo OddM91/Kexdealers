@@ -40,26 +40,26 @@ public class InventorySystem extends AbstractSystem {
 			
 			switch(message.getBehaviorID()) {
 			case TRANSFER_ITEM:
-				final int senderEID = (int) args[0];
-				final int recipientEID = (int) args[1];
-				final int itemID = (int) args[2];
-				InventoryComponent sender = entityController.getInventoryComponent(senderEID);
-				InventoryComponent recipient = entityController.getInventoryComponent(recipientEID);
-				sender.removeItem(itemID);
-				recipient.addItem(itemID);
+				final int A_senderEID = (int) args[0];
+				final int A_recipientEID = (int) args[1];
+				final int A_itemID = (int) args[2];
+				InventoryComponent A_sender = entityController.getInventoryComponent(A_senderEID);
+				InventoryComponent A_recipient = entityController.getInventoryComponent(A_recipientEID);
+				A_sender.removeItem(A_itemID);
+				A_recipient.addItem(A_itemID);
 				break;
 			case SPAWN_ITEM:
-				final int recipientEID = (int) args[0];
-				final Item item = (Item) args[2];
-				final int itemID = item.getItemID();
-				itemController.integrateItem(item);
-				InventoryComponent recipient = entityController.getInventoryComponent(recipientEID);
-				recipient.addItem(itemID);
+				final int B_recipientEID = (int) args[0];
+				final Item B_item = (Item) args[2];
+				final int B_itemID = B_item.getItemID();
+				itemController.integrateItem(B_item);
+				InventoryComponent B_recipient = entityController.getInventoryComponent(B_recipientEID);
+				B_recipient.addItem(B_itemID);
 			case DELETE_ITEM:
-				final int targetEID = (int) args[0];
-				final int itemID = (int) args[1];
-				InventoryComponent target = entityController.getInventoryComponent(targetEID);
-				target.removeItem(itemID);
+				final int C_targetEID = (int) args[0];
+				final int C_itemID = (int) args[1];
+				InventoryComponent C_target = entityController.getInventoryComponent(C_targetEID);
+				C_target.removeItem(C_itemID);
 			default: System.err.println("Inventory operation not implemented");
 			}
 		}

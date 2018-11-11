@@ -11,7 +11,7 @@ import org.lwjgl.glfw.GLFW;
 import bus.MessageBus;
 import bus.Recipients;
 import example.LinkStart;
-import example.Player;
+import example.PlayerSystem;
 import example.TeleportationSystem;
 import render.Display;
 import render.RenderSystem;
@@ -82,17 +82,17 @@ public class InputMapper {
 		}
 
 		// movement
-		messageBus.messageSystem(Recipients.PLAYER, Player.MOVE, is.pollMoveDirection());
+		messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.MOVE, is.pollMoveDirection());
 		if (is.doJump()) {
-			messageBus.messageSystem(Recipients.PLAYER, Player.JUMP, null);
+			messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.JUMP, null);
 		}
 
 		// look
-		messageBus.messageSystem(Recipients.PLAYER, Player.LOOK, is.pollLookMove().mul(is.getLookSensitivity()));
+		messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.LOOK, is.pollLookMove().mul(is.getLookSensitivity()));
 
 		// action
 		if (is.doInteract()) { // interacting with world
-			messageBus.messageSystem(Recipients.PLAYER, Player.INTERACT, null);
+			messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.INTERACT, null);
 		}
 
 		// debug

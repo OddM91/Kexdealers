@@ -3,6 +3,9 @@ package physics;
 import java.util.ArrayList;
 
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
+
+import com.sun.org.apache.bcel.internal.util.SyntheticRepository;
 
 import bus.Message;
 import bus.MessageBus;
@@ -18,22 +21,19 @@ public class PhysicsSystem extends AbstractSystem {
 	
 	// OP codes
 	public static final int SET_FORCE = 0;
+	public static final int REMOVE_FORCE = 1;
 	
 	private static final Vector3f G_FORCE = new Vector3f(0, -98.1f, 0);
-
+	private static final float ZERO_Y_HEIGHT = 0.0f;
+	private static final float GROUND_FRICTION = 0.2f;
+	
 	public PhysicsSystem(MessageBus messageBus, EntityController entityController) {
 		super(messageBus, entityController);
 	}
 
 	@Override
 	public void run() {
-		// control update rate here
-
-		// update :)
 		update();
-
-		// cleanUp on program exit
-		// cleanUp();
 	}
 
 	@Override
@@ -51,60 +51,79 @@ public class PhysicsSystem extends AbstractSystem {
 				// targetEID, forceName, vector
 				entityController.getPhysicsComponent((int) args[0])
 						.applyForce((String) args[1], (Vector3f) args[2]);
+				System.err.println("gravity!");
+				break;
+			case REMOVE_FORCE:
+				// targetEID, forceName
+				entityController.getPhysicsComponent((int) args[0])
+						.removeForce((String) args[1]);
 				break;
 			default: System.err.println("Physics operation not implemented");
 			}
 		}
 		
 		// process all physics components
-		for (PhysicsComponent currentComp : entityController.getPhysicsComponents()) {
-			Transformable currTrans = entityController.getTransformable(currentComp.getEID());
-			// TODO Implement a proper collision system.
-			// collision check using terrain height
-			float currHeight = terrain.getHeightAtPoint(currTrans.getPosition().x(), currTrans.getPosition().z());
-			if (Float.compare(currHeight, currTrans.getPosition().y()) > 0) {
-				currentComp.setOnGround(true);
-				Vector3f pos = new Vector3f();
-				currTrans.getPosition().add(0.0f, currHeight, 0.0f, pos);
-				Vector3f vel = new Vector3f(currentComp.getVelocity());
-				vel.setComponent(1, 0.0f);
-				currTrans.setPosition(pos);
-				currentComp.setVelocity(vel);
-			} else {
-				currentComp.setOnGround(false);
-			}
-
-			if (currentComp.isAffectedByPhysics()) {
-				// update gravity
-				if (currentComp.isAffectedByGravity()) {
-					currentComp.applyForce("gravity", (new Vector3f(G_FORCE)).mul(currentComp.getWeight()));
+		for (PhysicsComponent comp : entityController.getPhysicsComponents()) {
+			Transformable transformable = entityController.getTransformable(comp.getEID());
+			if (comp.isAffectedByPhysics()) {
+				
+				// Terrain collision
+				float terrainHeight = ZERO_Y_HEIGHT;
+				// TODO THIS FOLLOWING LINE MAKES GRAVITY WORK?????????
+				System.out.println(transformable.getPosition().y());
+				if (Float.compare(terrainHeight, transformable.getPosition().y()) >= 0) {
+					
+					comp.setOnGround(true);
+					Vector3f pos = new Vector3f();
+					transformable.getPosition().add(0.0f, terrainHeight, 0.0f, pos);
+					Vector3f vel = new Vector3f(comp.getVelocity());
+					vel.setComponent(1, 0.0f);
+					transformable.setPosition(pos);
+					comp.setVelocity(vel);
 				} else {
-					currentComp.removeForce("gravity");
+					comp.setOnGround(false);
 				}
-
-				// update acceleration
-				Vector3f resultingForce = new Vector3f();
-				for (Vector3f currForce : currentComp.getAppliedForces()) {
-					resultingForce.add(currForce);
+				
+				// Gravity
+				if (comp.isAffectedByGravity()) {
+					comp.applyForce("gravity", (new Vector3f(G_FORCE)).mul(comp.getWeight()));
+				} else {
+					comp.removeForce("gravity");
 				}
-				if (currentComp.isOnGround()) {
-					// simulate friction (too simple.)
+				
+				// --- Apply Forces
+				// .. acceleration
+				// sum of all applied forces
+				final Vector3f totalForce = new Vector3f();
+				for (Vector3f force : comp.getAppliedForces()) {
+					totalForce.add(force);
+				}
+				/*
+				if (comp.isOnGround()) {
+					// simulate ground friction (too simple.)
 					// TODO rewrite this.
 					final float frictionFactor = 0.2f;
-					Vector3f frictionForce = new Vector3f(currentComp.getVelocity());
+					Vector3f frictionForce = new Vector3f();
+					// take current velocity
+					frictionForce.add(comp.getVelocity());
+					// make friction only act on horizontal plane
 					frictionForce.y = 0;
-					frictionForce.mul(-1.0f / frictionFactor);
-					resultingForce.add(frictionForce);
-				}
-				Vector3f newAccel = resultingForce.div(currentComp.getWeight());
-				currentComp.setAcceleration(newAccel);
-
-				// update velocity
-				Vector3f newVeloc = (new Vector3f(currentComp.getVelocity())).add(newAccel.mul(super.getDeltaTime()));
-				currentComp.setVelocity(newVeloc);
-
-				// update position
-				currTrans.increasePosition(newVeloc.mul(super.getDeltaTime()));
+					// apply friction
+					frictionForce.mul(frictionFactor);
+					// ...and add modified effect of current velocity to total force
+					totalForce.add(frictionForce);
+				}*/
+				final Vector3f newAccel = totalForce.div(comp.getWeight());
+				comp.setAcceleration(newAccel);
+				
+				// .. velocity
+				final Vector3f newVelocity = newAccel.mul((float) super.getDeltaTime());
+				newVelocity.add(comp.getVelocity());
+				comp.setVelocity(newVelocity);
+				
+				// .. position
+				transformable.increasePosition(newVelocity.mul((float) super.getDeltaTime()));
+				
 			}
 		}
 

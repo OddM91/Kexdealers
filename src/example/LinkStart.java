@@ -77,7 +77,9 @@ public class LinkStart implements Runnable{
 		systems.put("TeleportationSystem", new TeleportationSystem(messageBus, entityController));
 		systems.put("NetworkSystem", new NetworkSystem(messageBus, entityController));
 		systems.put("AudioSystem", new AudioSystem(messageBus, entityController));
-		//systems.put("PhysicsSystem", new PhysicsSystem(messageBus, entityController));
+		systems.put("PhysicsSystem", new PhysicsSystem(messageBus, entityController));
+		systems.put("PlayerSystem", new PlayerSystem(messageBus, entityController));
+		
 		InputMapper inputMapper = new InputMapper(display, messageBus);
 		
 		// Local mode: Load a local instance
@@ -171,11 +173,11 @@ public class LinkStart implements Runnable{
 			}
 		}
 		
-		int playerID = 0; //look into file to choose the correct one :S
-		Player player = new Player(messageBus, entityController);
-		
 		messageBus.messageSystem(Recipients.RENDER_SYSTEM, 0/*debug lines*/, true/*to set them to "on"*/);
 		((AudioSystem) systems.get("AudioSystem")).playEntitySound(8);
+		
+		// Lucy's fix
+		messageBus.messageSystem(Recipients.RENDER_SYSTEM, RenderSystem.WIREFRAME, false);
 		
 		// < The Loop >
 		double frameBegin;
@@ -199,12 +201,15 @@ public class LinkStart implements Runnable{
 			
 			// World update
 			inputMapper.updateInput();
-			player.update(playerID, timeDelta);
+			
 			// Teleport
 			systems.get("TeleportationSystem").run();
 			
+			// Player
+			systems.get("PlayerSystem").run();
+			
 			// Physics
-			//system.get("PhysicsSystem").run();
+			systems.get("PhysicsSystem").run();
 			
 			if (!headless) { 
 				// Audio
