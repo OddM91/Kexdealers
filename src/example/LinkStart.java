@@ -23,39 +23,26 @@ import render.Display;
 import render.RenderSystem;
 
 public class LinkStart implements Runnable{
-
-	private Thread gameloop = null;
-	private boolean running = false;
 	
-	// online == false -> run in local mode
-	private boolean online = false;
+	private static boolean running = false;
+	private static boolean online = false;
 	
-	private boolean headless = false;
+	private static final int TARGET_FPS = 60;
 	
-	private static int targetFPS = 60;
-	public static double timeDelta = 1 / targetFPS;
-	
-	private long tickCounter = 0;
-	
-	// list of all systems
 	private final HashMap<String, AbstractSystem> systems = new HashMap<>();
 	
-	// op codes
+	// opcodes
 	public static final int SHUTDOWN = 0;
 	
 	// TIME
 	public static float FRAME_TIME = 0;
-	public static float FRAME_BEGIN = 0;
+	private float frameBegin = 0;
+	private long tickCounter = 0;
 	
 	public static void main(String[] args){
-		LinkStart link = new LinkStart();
-		link.start();
-		
-	}
-	
-	public void start(){
+		final LinkStart link = new LinkStart();
+		final Thread gameloop = new Thread(link, "game_loop");
 		running = true;
-		gameloop = new Thread(this, "game_loop");
 		gameloop.start();
 	}
 	
@@ -63,7 +50,6 @@ public class LinkStart implements Runnable{
 	public void run(){
 		
 		// Window creation
-		//Display_old display = null;
 		Display display = null;
 		display = new Display(1920, 1080);
 		display.create();
@@ -75,6 +61,9 @@ public class LinkStart implements Runnable{
 		// Message Bus
 		MessageBus messageBus = MessageBus.getInstance();
 
+		// Input
+		InputMapper inputMapper = new InputMapper(display, messageBus);
+
 		// Systems - Create a System here if you want to use it :)
 		systems.put("RenderSystem", new RenderSystem(messageBus, entityController, display));
 		systems.put("TeleportationSystem", new TeleportationSystem(messageBus, entityController));
@@ -83,8 +72,6 @@ public class LinkStart implements Runnable{
 		systems.put("PhysicsSystem", new PhysicsSystem(messageBus, entityController));
 		systems.put("PlayerSystem", new PlayerSystem(messageBus, entityController));
 		systems.put("InventorySystem", new InventorySystem(messageBus, entityController, itemController));
-		
-		InputMapper inputMapper = new InputMapper(display, messageBus);
 		
 		// Local mode: Load a local instance
 		// Online mode: Connect to a server and request an instance from there.
@@ -156,7 +143,7 @@ public class LinkStart implements Runnable{
 		// < The Loop >
 		while(running){
 			
-			FRAME_BEGIN = (float) GLFW.glfwGetTime();
+			frameBegin = (float) GLFW.glfwGetTime();
 			
 			// Process messages
 			Message message;
@@ -195,9 +182,9 @@ public class LinkStart implements Runnable{
 				running = false;
 			}
 			
-			FRAME_TIME = (float) GLFW.glfwGetTime() - FRAME_BEGIN;
+			FRAME_TIME = (float) GLFW.glfwGetTime() - frameBegin;
 			
-			if (tickCounter % (targetFPS*2) == 0) {
+			if (tickCounter % (TARGET_FPS*2) == 0) {
 				System.out.println((Math.floor(1000 / FRAME_TIME)) / 1000 + " FPS");
 			}
 			tickCounter++;

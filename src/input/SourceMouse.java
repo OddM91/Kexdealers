@@ -3,6 +3,7 @@ package input;
 import java.nio.DoubleBuffer;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 
@@ -11,10 +12,10 @@ import render.Display;
 
 public class SourceMouse implements InputSourceI {
 
-	private float sensitivity = 0.04f;
+	private final float sensitivity = 0.04f;
 	
 	private boolean dointeract = false;
-	private Vector2f prevMousePos = new Vector2f();
+	private Vector3f prevMousePos = new Vector3f();
 
 	private final Display display;
 	private final MessageBus bus;
@@ -30,16 +31,17 @@ public class SourceMouse implements InputSourceI {
 	}
 
 	@Override
-	public Vector2f pollLookMove() {
+	public Vector3f pollLookMove() {
 		DoubleBuffer b1 = BufferUtils.createDoubleBuffer(1);
 		DoubleBuffer b2 = BufferUtils.createDoubleBuffer(1);
 		GLFW.glfwGetCursorPos(display.window, b1, b2);
-
-		Vector2f ret = new Vector2f((float) b1.get(0), (float) b2.get(0));
+		
+		// yaw -> x, pitch -> y, roll -> z
+		Vector3f ret = new Vector3f((float) b1.get(0), (float) b2.get(0), 0.0f);
 		ret.sub(prevMousePos);
-		ret.mul(new Vector2f(1, -1));
+		ret.mul(new Vector3f(1.0f, -1.0f, 1.0f));
 
-		prevMousePos.set((float) b1.get(0), (float) b2.get(0));
+		prevMousePos.set((float) b1.get(0), (float) b2.get(0), 0.0f);
 
 		return ret;
 	}

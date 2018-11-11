@@ -1,6 +1,6 @@
 package input;
 
-import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public interface InputSourceI {
 	
@@ -12,14 +12,14 @@ public interface InputSourceI {
 	default boolean closeGame() { return false; }
 	
 	// movement
-	default Vector2f pollMoveDirection() { // negative x: left, positive y: forward. clamped to [-1,1]
-		return new Vector2f();
+	default Vector3f pollMoveDirection() { // negative x: left, positive y: forward. clamped to [-1,1]
+		return new Vector3f();
 	}
 	default public boolean doJump() { return false; }
 	
 	// look
-	default Vector2f pollLookMove() { // negative x: left, positive y: up
-		return new Vector2f();
+	default Vector3f pollLookMove() { // negative x: yaw left, positive y: pitch up, negative z: roll left
+		return new Vector3f();
 	}
 	default float getLookSensitivity() { return 1; }
 	

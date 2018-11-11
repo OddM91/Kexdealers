@@ -19,12 +19,14 @@ import terrain.Terrain;
 
 public class PhysicsSystem extends AbstractSystem {
 	
-	// OP codes
+	// opcodes
 	public static final int SET_FORCE = 0;
 	public static final int REMOVE_FORCE = 1;
+	public static final int JUMP = 10;
+	public static final int MOVE = 11;
 	
 	private static final Vector3f G_ACCEL = new Vector3f(0, -98.1f, 0).mul(100.0f);
-	private static final float ZERO_Y_HEIGHT = 0.0f;
+	private static final float ZERO_Y_HEIGHT = 7.0f;
 	private static final float GROUND_FRICTION = 0.2f;
 	
 	public PhysicsSystem(MessageBus messageBus, EntityController entityController) {
@@ -56,11 +58,25 @@ public class PhysicsSystem extends AbstractSystem {
 				entityController.getPhysicsComponent((int) args[0])
 						.removeForce((String) args[1]);
 				break;
+			case JUMP:
+				final int jumpTargetEID = (int) args[0];
+				final Vector3f jump = (Vector3f) args[1];
+				entityController.getPhysicsComponent(jumpTargetEID)
+						.applyForce("jump", jump);
+				break;
+			case MOVE:
+				// targetEID, direction vector
+				final int moveTargetEID = (int) args[0];
+				final Vector3f move = (Vector3f) args[1];
+				move.rotate(entityController.getTransformable(moveTargetEID).getRotation());
+				entityController.getPhysicsComponent(moveTargetEID)
+						.setVelocity(move);
+				break;
 			default: System.err.println("Physics operation not implemented");
 			}
 		}
 		
-		// process all physics components
+		// Process all physics components
 		for (PhysicsComponent comp : entityController.getPhysicsComponents()) {
 			Transformable transformable = entityController.getTransformable(comp.getEID());
 			if (comp.isAffectedByPhysics()) {
@@ -83,17 +99,20 @@ public class PhysicsSystem extends AbstractSystem {
 				} else {
 					comp.setOnGround(false);
 					// Gravity on!
-					comp.applyForce("gravity", (new Vector3f(G_ACCEL)).mul(comp.getWeight()));
+					comp.applyForce("gravity", new Vector3f(G_ACCEL));
 				}
 				
 				
 				// --- Apply Forces
-				// .. acceleration
-				// sum of all applied forces
 				final Vector3f totalForce = new Vector3f();
-				for (Vector3f force : comp.getAppliedForces()) {
-					totalForce.add(force);
+				// basic force
+				comp.getAcceleration().mul(comp.getWeight(), totalForce);
+				// calculate sum of added forces
+				for (Vector3f a : comp.getAppliedForces()) {
+					totalForce.add(a).mul(comp.getWeight());
 				}
+				
+				// --- Grounded physics
 				if (comp.isOnGround()) {
 					// simulate ground friction (too simple.)
 					// TODO rewrite this.
@@ -108,15 +127,18 @@ public class PhysicsSystem extends AbstractSystem {
 					// ...and add modified effect of current velocity to total force
 					totalForce.add(frictionForce);
 				}
-				final Vector3f newAccel = totalForce.div(comp.getWeight());
-				comp.setAcceleration(newAccel);
+				// --- Airborne physics
+				if (!comp.isOnGround()) {
+					// remove jump forces
+					comp.removeForce("jump");
+				}
 				
-				// .. velocity
-				final Vector3f newVelocity = newAccel.mul(super.getFrameTimeMillis());
-				newVelocity.add(comp.getVelocity());
+				// --- Velocity
+				final Vector3f newVelocity = new Vector3f(comp.getVelocity());
+				newVelocity.add(totalForce.mul(super.getFrameTimeMillis()));
 				comp.setVelocity(newVelocity);
 				
-				// .. position
+				// --- Position
 				transformable.increasePosition(newVelocity.mul(super.getFrameTimeMillis()));
 				
 			}

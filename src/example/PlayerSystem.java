@@ -18,31 +18,18 @@ import physics.PhysicsSystem;
 
 public class PlayerSystem extends AbstractSystem {
 	
-	// op codes
-	public static final int MOVE = 0;
-	public static final int INTERACT = 1;
+	// opcodes
+	public static final int INTERACT = 0;
+	public static final int LOOK = 1;
 	public static final int JUMP = 2;
-	public static final int LOOK = 3; 
-
-	private Vector3f moveVec = new Vector3f();
+	public static final int MOVE = 3;
 
 	// -- player params
 	private static final int PLAYER_ID = 0; //look into file to choose the correct one :S
 	private final float walkSpeed = 32.5f;
-	private final Vector3f jumpForce = new Vector3f(0, 90_000.0f, 0);
+	private final Vector3f jumpForce = new Vector3f(0, 100.0f, 0);
 	private final Vector3f cameraOffset = new Vector3f(0.0f, 10.0f, 0.0f);
-	/*
-	 * private final Vector3f cameraFPoffset = new Vector3f(0.0f, 10.0f, 0.0f);
-	 * private final Vector3f cameraTPoffset = new Vector3f(0.0f, 10.0f, 0.0f);
-	 */
-
-	// -- state tracking
-	/*
-	 * cameraDirective indicates how the camera is supposed to be updated 0: don't
-	 * update 1: follow player (FP) 2: look at player 3: follow player (TP) private
-	 * int cameraDirective = 1;
-	 */
-
+	
 	public PlayerSystem(MessageBus messageBus, EntityController entityController) {
 		super(messageBus, entityController);
 	}
@@ -54,11 +41,10 @@ public class PlayerSystem extends AbstractSystem {
 
 	@Override
 	public void update() {
+
+		final Transformable transformable = entityController.getTransformable(PLAYER_ID);
 		
-		Vector2f inputMoveDir = new Vector2f();
-		Vector2f inputLookDir = new Vector2f();
-		boolean inputJump = false;
-		boolean inputInteract = false;
+		boolean interactInput = false;
 		
 		// Process messages
 		Message message;
@@ -67,64 +53,39 @@ public class PlayerSystem extends AbstractSystem {
 			final Object[] args = message.getArgs();
 			
 			switch(message.getBehaviorID()) {
-			case JUMP:
-				inputJump = true;
-				break;
 			case INTERACT:
-				inputInteract = true;
-				break;
-			case MOVE:
-				inputMoveDir.add((Vector2f) args[0]);
+				interactInput = true;
 				break;
 			case LOOK:
-				inputLookDir.add((Vector2f) args[0]);
+				final Vector3f cameraInput = (Vector3f) args[0];
+				cameraInput.mul(super.getFrameTimeMillis());
+				// update camera position and rotation
+				final FPPCameraComponent camera = entityController.getFPPCameraComponent(PLAYER_ID);
+				if (camera != null) {
+					camera.rotateYaw(cameraInput.x());
+					camera.rotatePitch(-cameraInput.y());
+					final Vector3f newCamPos = new Vector3f(transformable.getPosition());
+					newCamPos.add(cameraOffset, newCamPos);
+					camera.setPosition(newCamPos);
+				}
+				// update player rotation
+				transformable.rotateRadians(0.0f, -cameraInput.x(), 0.0f);
+				break;
+			case JUMP:
+				messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.JUMP, PLAYER_ID, jumpForce);
+				break;
+			case MOVE:
+				final Vector3f move = (Vector3f) args[1];
+				move.mul(walkSpeed);
+				messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.MOVE, PLAYER_ID, move);
 				break;
 			default: System.err.println("Player operation not implemented");
 			}
 		}
 		
-		Transformable transformable = entityController.getTransformable(PLAYER_ID);
-		PhysicsComponent physics = entityController.getPhysicsComponent(PLAYER_ID);
-		// -- Poll input
-		Vector2f lookRot = new Vector2f(inputLookDir);
-		lookRot.mul((float) super.getFrameTimeMillis());
-		
-		if (inputInteract) {
+		// -- Interact
+		if (interactInput) {
 			System.out.println("Player interacted");
-		}
-		
-		if (physics.isOnGround()) {
-			// player is on ground
-			physics.setOnGround(true);
-			if (inputJump) {
-				messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.SET_FORCE, PLAYER_ID, "jumpForce", jumpForce);
-			}
-			moveVec.x = inputMoveDir.x;
-			moveVec.z = inputMoveDir.y;
-			moveVec.mul(walkSpeed);
-			moveVec.rotate(transformable.getRotation());
-			
-		} else {
-			// player is mid air
-			physics.setOnGround(false);
-			messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.REMOVE_FORCE, PLAYER_ID, "jumpForce");
-		}
-		
-		// -- Update player velocity and rotation
-		// ..velocity
-		physics.setVelocity(new Vector3f(moveVec.x, physics.getVelocity().y(), moveVec.z));
-		// ..rotation
-		transformable.rotateRadians(0.0f, -lookRot.x(), 0.0f);
-		
-		// -- Camera update
-		FPPCameraComponent camera = entityController.getFPPCameraComponent(PLAYER_ID);
-		if (camera != null) {
-			camera.rotateYaw(lookRot.x());
-			camera.rotatePitch(-lookRot.y());
-			Vector3f newCamPos = new Vector3f(transformable.getPosition());
-			newCamPos.add(cameraOffset, newCamPos);
-			// newCamPos.y = 0.0f;
-			camera.setPosition(newCamPos);
 		}
 	}
 	

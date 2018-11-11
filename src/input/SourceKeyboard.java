@@ -3,6 +3,7 @@ package input;
 import java.util.HashMap;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import com.sun.nio.file.SensitivityWatchEventModifier;
@@ -30,8 +31,8 @@ public class SourceKeyboard implements InputSourceI {
 		WIREFRAME,
 		TELEPORT
 	}
-	private HashMap<Actions, Integer> keyMappings;
-	private float sensitivity = 0.25f;
+	private final HashMap<Actions, Integer> keyMappings;
+	private final float sensitivity = 1.0f;
 	
 	
 	// flags
@@ -73,17 +74,17 @@ public class SourceKeyboard implements InputSourceI {
 	}
 	
 	@Override
-	public Vector2f pollMoveDirection() {
-		Vector2f ret = new Vector2f();
+	public Vector3f pollMoveDirection() {
+		Vector3f ret = new Vector3f();
 		
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LEFT)) == GLFW.GLFW_PRESS) {
 			ret.x = -1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.FORWARD)) == GLFW.GLFW_PRESS) {
-			ret.y = 1;
+			ret.z = 1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.BACKWARD)) == GLFW.GLFW_PRESS) {
-			ret.y = -1;
+			ret.z = -1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.RIGHT)) == GLFW.GLFW_PRESS) {
 			ret.x = 1;
@@ -112,8 +113,8 @@ public class SourceKeyboard implements InputSourceI {
 	}
 
 	@Override
-	public Vector2f pollLookMove() {
-		Vector2f ret = new Vector2f();
+	public Vector3f pollLookMove() {
+		Vector3f ret = new Vector3f();
 		
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LOOK_LEFT)) == GLFW.GLFW_PRESS) {
 			ret.x = -1;
