@@ -12,7 +12,7 @@ public interface InputSourceI {
 	default boolean closeGame() { return false; }
 	
 	// movement
-	default Vector3f pollMoveDirection() { // negative x: left, positive y: forward. clamped to [-1,1]
+	default Vector3f pollMoveDirection() { // negative x: right, positive y: forward. clamped to [-1,1]
 		return new Vector3f();
 	}
 	default public boolean doJump() { return false; }

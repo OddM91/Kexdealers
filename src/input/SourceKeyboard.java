@@ -78,7 +78,7 @@ public class SourceKeyboard implements InputSourceI {
 		Vector3f ret = new Vector3f();
 		
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.LEFT)) == GLFW.GLFW_PRESS) {
-			ret.x = -1;
+			ret.x = 1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.FORWARD)) == GLFW.GLFW_PRESS) {
 			ret.z = 1;
@@ -87,7 +87,7 @@ public class SourceKeyboard implements InputSourceI {
 			ret.z = -1;
 		}
 		if (GLFW.glfwGetKey(display.window, keyMappings.get(Actions.RIGHT)) == GLFW.GLFW_PRESS) {
-			ret.x = 1;
+			ret.x = -1;
 		}
 		
 		return ret;
