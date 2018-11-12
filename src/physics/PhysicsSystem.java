@@ -20,9 +20,8 @@ import terrain.Terrain;
 public class PhysicsSystem extends AbstractSystem {
 	
 	// opcodes
-	public static final int SET_FORCE = 0;
-	public static final int REMOVE_FORCE = 1;
-	public static final int JUMP = 10;
+	public static final int ADD_ACCELERATION = 0;
+	public static final int REMOVE_ACCELERATION = 1;
 	public static final int MOVE = 11;
 	
 	private static final Vector3f G_ACCEL = new Vector3f(0, -98.1f, 0).mul(10.0f);
@@ -47,30 +46,18 @@ public class PhysicsSystem extends AbstractSystem {
 			final Object[] args = message.getArgs();
 			
 			switch(message.getBehaviorID()) {
-			case SET_FORCE:
-				// targetEID, forceName, vector
-				entityController.getPhysicsComponent((int) args[0])
-						.applyForce((String) args[1], (Vector3f) args[2]);
+			case ADD_ACCELERATION:
+				// targetEID, acceleration name, vector
+				final int targetEID = (int) args[0];
+				final String accelerationName = (String) args[1];
+				final Vector3f vector = (Vector3f) args[2];
+				entityController.getPhysicsComponent(targetEID)
+						.addAcceleration(accelerationName, vector);
 				break;
-			case REMOVE_FORCE:
+			case REMOVE_ACCELERATION:
 				// targetEID, forceName
 				entityController.getPhysicsComponent((int) args[0])
-						.removeForce((String) args[1]);
-				break;
-			case JUMP:
-				// targetEID, jump acceleration
-				final int jumpTargetEID = (int) args[0];
-				final Vector3f jump = (Vector3f) args[1];
-				entityController.getPhysicsComponent(jumpTargetEID)
-						.applyForce("jump", jump);
-				break;
-			case MOVE:
-				// targetEID, direction vector
-				final int moveTargetEID = (int) args[0];
-				final Vector3f move = (Vector3f) args[1];
-				move.rotate(entityController.getTransformable(moveTargetEID).getRotation());
-				entityController.getPhysicsComponent(moveTargetEID)
-						.setVelocity(move);
+						.removeAcceleration((String) args[1]);
 				break;
 			default: System.err.println("Physics operation not implemented");
 			}
@@ -81,65 +68,44 @@ public class PhysicsSystem extends AbstractSystem {
 			Transformable transformable = entityController.getTransformable(comp.getEID());
 			if (comp.isAffectedByPhysics()) {
 				
-				// Terrain collision
-				float terrainHeight = ZERO_Y_HEIGHT;
+				// Remove gravity if entity is standing on ground
+				if(transformable.getPosition().y() == ZERO_Y_HEIGHT) {
+					comp.removeAcceleration("gravity");
+				}
 				
-				if (Float.compare(terrainHeight, transformable.getPosition().y()) > 0) {
-					System.out.println("correcting");
-					// Whenever entity goes underneath terrain, teleport it back up.
-					// Set flag
-					comp.setOnGround(true);
-					// Correct position
+				// Add gravity acceleration to entities that are airborne
+				// Remove jumping acceleration to entities that have no ground contact
+				if(transformable.getPosition().y() > ZERO_Y_HEIGHT) {
+					comp.addAcceleration("gravity", G_ACCEL);
+					comp.removeAcceleration("jump");
+				}
+				
+				Vector3f totalAcceleration = new Vector3f();
+				for(Vector3f a : comp.getAccelerations()) {
+					totalAcceleration.add(a);
+				}
+				
+				// v = a * t
+				Vector3f velocity = totalAcceleration.mul(super.getFrameTimeMillis());
+				comp.setVelocity(velocity);
+				
+				// deltaDistance = v * t
+				velocity.mul(super.getFrameTimeMillis());
+				Vector3f position = new Vector3f(transformable.getPosition());
+				position.add(velocity);
+				transformable.setPosition(position);
+				
+				// Teleport everything below ground to ground level
+				if(transformable.getPosition().y() < ZERO_Y_HEIGHT) {
 					transformable.setPosition(new Vector3f(
 							transformable.getPosition().x(),
-							terrainHeight, 
-							transformable.getPosition().z()));
-					// Reset vertical velocity
-					comp.setVelocity(new Vector3f(
-							comp.getVelocity().x(),
-							0.0f,
-							comp.getVelocity().z()));
-				} else {
-					System.out.println("airborne");
-					comp.setOnGround(false);
-				}
-				if (Float.compare(terrainHeight, transformable.getPosition().y()) == 0) {
-					System.out.println("freeze");
-					//comp.setAffectedByPhysics(false);
-					//System.out.println(comp.toString());
-				} 
-				
-				
-				// --- Apply Forces
-				final Vector3f totalForce = new Vector3f();
-				// basic force
-				comp.getAcceleration().mul(comp.getWeight(), totalForce);
-				// calculate sum of added forces
-				for (Vector3f a : comp.getAppliedForces()) {
-					totalForce.add(a).mul(comp.getWeight());
+							ZERO_Y_HEIGHT,
+							transformable.getPosition().z()
+							));
 				}
 				
-				// --- Grounded physics
-				if (comp.isOnGround()) {
-					// remove gravity acceleration
-					comp.removeForce("gravity");
-				}
-				// --- Airborne physics
-				if (!comp.isOnGround()) {
-					// add gravity acceleration
-					comp.applyForce("gravity", new Vector3f(G_ACCEL));
-					// remove jump acceleration
-					comp.removeForce("jump");
-				}
-				
-				// --- Velocity
-				final Vector3f newVelocity = new Vector3f(comp.getVelocity());
-				newVelocity.add(totalForce.mul(super.getFrameTimeMillis()));
-				comp.setVelocity(newVelocity);
-				
-				// --- Position
-				transformable.increasePosition(newVelocity.mul(super.getFrameTimeMillis()));
-				
+				// Clean up some accelerations
+				comp.removeAcceleration("move");
 			}
 		}
 	}

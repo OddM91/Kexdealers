@@ -26,7 +26,7 @@ public class PlayerSystem extends AbstractSystem {
 
 	// -- player params
 	private static final int PLAYER_ID = 0; //look into file to choose the correct one :S
-	private final float walkSpeed = 32.5f;
+	private final float walkSpeed = 1600.0f;
 	private final Vector3f jumpForce = new Vector3f(0, 100.0f, 0);
 	private final Vector3f cameraOffset = new Vector3f(0.0f, 10.0f, 0.0f);
 	
@@ -72,12 +72,13 @@ public class PlayerSystem extends AbstractSystem {
 				transformable.rotateRadians(0.0f, -cameraInput.x(), 0.0f);
 				break;
 			case JUMP:
-				messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.JUMP, PLAYER_ID, jumpForce);
+				messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.ADD_ACCELERATION, PLAYER_ID, "jump", jumpForce);
 				break;
 			case MOVE:
 				final Vector3f move = (Vector3f) args[1];
 				move.mul(walkSpeed);
-				messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.MOVE, PLAYER_ID, move);
+				move.rotate(entityController.getTransformable(PLAYER_ID).getRotation());
+				messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.ADD_ACCELERATION, PLAYER_ID, "move", move);
 				break;
 			default: System.err.println("Player operation not implemented");
 			}

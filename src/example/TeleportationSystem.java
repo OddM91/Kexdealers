@@ -97,8 +97,5 @@ public class TeleportationSystem extends AbstractSystem {
 		// > fancy effects <
 		// wheeeeeee~~~
 		entityController.getTransformable(targetEID).setPosition(destination);
-		if (entityController.getPhysicsComponent(targetEID) != null) {
-			entityController.getPhysicsComponent(targetEID).resetVelocity();
-		}
 	}
 }
