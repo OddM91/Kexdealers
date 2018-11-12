@@ -73,6 +73,11 @@ public class PhysicsComponent extends Component {
 		return this;
 	}
 
+	public PhysicsComponent resetVelocity() {
+		velocity.set(0.0f, 0.0f, 0.0f);
+		return this;
+	}
+	
 	public Vector3fc getAcceleration() {
 		return acceleration;
 	}
@@ -82,13 +87,8 @@ public class PhysicsComponent extends Component {
 		return this;
 	}
 
-	public PhysicsComponent resetVelocity() {
-		velocity.set(0,0,0);
-		return this;
-	}
-	
 	public PhysicsComponent resetAcceleration() {
-		acceleration.set(0,0,0);
+		acceleration.set(0.0f, 0.0f, 0.0f);
 		return this;
 	}
 	

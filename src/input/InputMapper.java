@@ -81,7 +81,7 @@ public class InputMapper {
 			messageBus.messageSystem(Recipients.MAIN, LinkStart.SHUTDOWN, null);
 		}
 
-		// movement
+		// Movement
 		messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.MOVE, null, is.pollMoveDirection());
 		if (is.doJump()) {
 			messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.JUMP, null);
