@@ -166,11 +166,11 @@ public class LinkStart implements Runnable{
 			// Teleport
 			systems.get("TeleportationSystem").run();
 			
-			// Player
-			systems.get("PlayerSystem").run();
-			
 			// Physics
 			systems.get("PhysicsSystem").run();
+
+			// Player
+			systems.get("PlayerSystem").run();
 			
 			// Audio
 			systems.get("AudioSystem").run();

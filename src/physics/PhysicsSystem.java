@@ -80,6 +80,7 @@ public class PhysicsSystem extends AbstractSystem {
 					comp.removeAcceleration("jump");
 				}
 				
+				// aTotal = a1 + a2 + ... +aN
 				Vector3f totalAcceleration = new Vector3f();
 				for(Vector3f a : comp.getAccelerations()) {
 					totalAcceleration.add(a);
