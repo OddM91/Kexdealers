@@ -10,8 +10,6 @@ import org.joml.Vector3fc;
 
 public class Transformable extends Component{
 	
-	private int eID;
-	
 	private Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
 	
 	private Quaternionf rotation = new Quaternionf().identity();
@@ -24,7 +22,7 @@ public class Transformable extends Component{
 	private Vector3f dirVec = new Vector3f();
 	
 	public Transformable(int eID){
-		this.eID = eID;
+		super(eID);
 		
 		transformation = new Matrix4f().identity();
 	}

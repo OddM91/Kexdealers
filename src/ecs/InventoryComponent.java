@@ -4,15 +4,13 @@ import java.util.ArrayList;
 
 public class InventoryComponent extends Component{
 	
-	private int eID;
-	
 	private boolean isCharacterInventory;
 	private int capacity = 1;
 	private int usedCapacity = 0;
 	private ArrayList<Integer> content = new ArrayList<>();
 	
 	public InventoryComponent(int eID) {
-		this.eID = eID;
+		super(eID);
 	}
 	
 	@Override

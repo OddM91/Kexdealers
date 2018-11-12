@@ -7,10 +7,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public class PhysicsComponent extends Component {
-
-	private int eID;
 	
-	private float weight = 0.0f;
 	private Vector3f velocity = new Vector3f();
 	private HashMap<String, Vector3f> accelerations = new HashMap<>();
 	
@@ -18,7 +15,7 @@ public class PhysicsComponent extends Component {
 	private boolean isOnGround = false;
 
 	public PhysicsComponent(int eID) {
-		this.eID = eID;
+		super(eID);
 	}
 
 	@Override
@@ -34,7 +31,6 @@ public class PhysicsComponent extends Component {
 	@Override
 	public PhysicsComponent clone() {
 		PhysicsComponent deepCopy = new PhysicsComponent(this.eID)
-				.setWeight(this.weight)
 				.setVelocity(this.velocity)
 				.setAffectedByPhysics(this.isAffectedByPhysics)
 				.setOnGround(this.isOnGround);
@@ -49,25 +45,15 @@ public class PhysicsComponent extends Component {
 		StringBuilder s = new StringBuilder();
 		s.append("PhysicsComponent<").append(eID).append(">");
 		s.append("(");
-		//s.append(" M: ").append(weight);
 		s.append(" V: ").append(velocity);
-		//s.append(" Physics: ").append(isAffectedByPhysics);
-		//s.append(" Grounded: ").append(isOnGround);
+		s.append(" Physics: ").append(isAffectedByPhysics);
+		s.append(" Grounded: ").append(isOnGround);
 		for(Entry<String, Vector3f> a : accelerations.entrySet()) {
 			s.append(" ").append(a.getKey()).append(": ");
 			s.append(a.getValue().x).append("/").append(a.getValue().y).append("/").append(a.getValue().z);
 		}
 		s.append(" )");
 		return s.toString();
-	}
-	
-	public float getWeight() {
-		return weight;
-	}
-
-	public PhysicsComponent setWeight(float weight) {
-		this.weight = weight;
-		return this;
 	}
 	
 	public Vector3fc getVelocity() {

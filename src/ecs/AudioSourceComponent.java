@@ -2,8 +2,6 @@ package ecs;
 
 public class AudioSourceComponent extends Component{
 	
-	private int eID;
-	
 	private String assetName = "default";
 	
 	private int sourceID = -1;
@@ -18,7 +16,7 @@ public class AudioSourceComponent extends Component{
 	private float startPos = 0.0f; // in seconds
 	
 	public AudioSourceComponent(int eID) {
-		this.eID = eID;
+		super(eID);
 	}
 
 	@Override

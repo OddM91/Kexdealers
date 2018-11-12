@@ -2,9 +2,7 @@ package ecs;
 
 import org.joml.Vector3f;
 
-public class PointLightComponent extends Component{
-
-	private int eID;
+	public class PointLightComponent extends Component{
 	
 	private Vector3f position = new Vector3f();
 	private Vector3f ambient = new Vector3f();
@@ -14,7 +12,7 @@ public class PointLightComponent extends Component{
 	private float cutoff = 0.005f;
 	
 	public PointLightComponent(int eID){
-		this.eID = eID;
+		super(eID);
 	}
 	
 	@Override

@@ -134,7 +134,6 @@ public class PhysicsSystem extends AbstractSystem {
 				// extract data and add component
 				frags = BlueprintLoader.getDataFragments(dataSet);
 				entityController.addPhysicsComponent(eID)
-						.setWeight(Float.valueOf(frags[0]))
 						.setAffectedByPhysics(Boolean.valueOf(frags[1]));
 				
 			} catch (NullPointerException | IndexOutOfBoundsException e) {

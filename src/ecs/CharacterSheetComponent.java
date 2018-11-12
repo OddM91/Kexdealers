@@ -1,8 +1,6 @@
 package ecs;
 
 public class CharacterSheetComponent extends Component {
-
-	private int eID;
 	
 	private String name = "default";
 	
@@ -15,7 +13,7 @@ public class CharacterSheetComponent extends Component {
 	
 	
 	public CharacterSheetComponent(int eID) {
-		this.eID = eID;
+		super(eID);
 	}
 	
 	@Override

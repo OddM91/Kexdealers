@@ -6,8 +6,6 @@ import org.joml.Vector3f;
 
 public class FPPCameraComponent extends Component{
 	
-	private int eID;
-	
 	private Vector3f cameraPosition = new Vector3f();
 	private Quaternionf viewDir = new Quaternionf()
 			.rotateY((float) Math.toRadians(180));
@@ -23,7 +21,7 @@ public class FPPCameraComponent extends Component{
 	private Matrix4f projectionMatrix = new Matrix4f();
 	
 	public FPPCameraComponent(int eID) {
-		this.eID = eID;
+		super(eID);
 	}
 	
 	@Override

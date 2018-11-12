@@ -1,7 +1,13 @@
 package ecs;
 
 public abstract class Component {
-	// Nothing here ¯\_(ツ)_/¯
+	
+	protected int eID;
+	
+	protected Component(int eID) {
+		this.eID = eID;
+	}
+	
 	public abstract int getEID();
 	public abstract void setEID(int eID);
 	

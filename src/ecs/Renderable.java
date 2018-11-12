@@ -2,8 +2,6 @@ package ecs;
 
 public class Renderable extends Component {
 	
-	private int eID;
-	
 	private String assetName = "default";
 	
 	// unused right now
@@ -11,7 +9,7 @@ public class Renderable extends Component {
 	private String materialName = "default";
 	
 	public Renderable(int eID){
-		this.eID = eID;
+		super(eID);
 	}
 	
 	@Override
