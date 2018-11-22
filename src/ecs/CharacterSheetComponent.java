@@ -17,16 +17,6 @@ public class CharacterSheetComponent extends Component {
 	}
 	
 	@Override
-	public int getEID() {
-		return eID;
-	}
-
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
-
-	@Override
 	public CharacterSheetComponent clone() {
 		CharacterSheetComponent deepCopy = new CharacterSheetComponent(this.eID)
 				.setName(this.name)

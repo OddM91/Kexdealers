@@ -16,16 +16,6 @@ import org.joml.Vector3f;
 	}
 	
 	@Override
-	public int getEID(){
-		return eID;
-	}
-	
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
-
-	@Override
 	public PointLightComponent clone() {
 		PointLightComponent deepCopy = new PointLightComponent(eID)
 				.setPosition(new Vector3f(this.position))

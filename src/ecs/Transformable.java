@@ -28,16 +28,6 @@ public class Transformable extends Component{
 	}
 	
 	@Override
-	public int getEID(){
-		return eID;
-	}
-
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
-	
-	@Override
 	public Transformable clone() {
 		Transformable deepCopy = new Transformable(this.eID)
 				.setPosition(new Vector3f(this.position))

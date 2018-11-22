@@ -17,7 +17,7 @@ public class RenderComponentDecoder implements DecoderCommand{
 		while((next = stream.readChar()) != '\n') {
 			assetName.append(next);
 		}
-		comp.setAssetName(assetName.toString());
+		comp.setResourceName(assetName.toString());
 		
 		return comp;
 	}

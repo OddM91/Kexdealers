@@ -14,16 +14,6 @@ public class InventoryComponent extends Component{
 	}
 	
 	@Override
-	public int getEID() {
-		return eID;
-	}
-
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
-
-	@Override
 	public Component clone() {
 		InventoryComponent deepCopy = new InventoryComponent(this.eID)
 				.setIsCharacterInventory(this.isCharacterInventory)

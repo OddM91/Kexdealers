@@ -14,7 +14,8 @@ public class EntityController {
 		FPPCAMERACOMPONENT,
 		PLAYERCONTROLLERCOMPONENT,
 		PHYSICSCOMPONENT,
-		INVENTORYCOMPONENT
+		INVENTORYCOMPONENT,
+		ANIMATIONCOMPONENT
 	}
 	
 	private final HashMap<Integer, ArrayList<CompType>> entities = new HashMap<>();
@@ -27,6 +28,7 @@ public class EntityController {
 	private final HashMap<Integer, PlayerControllerComponent> playerControllerComponent = new HashMap<>();
 	private final HashMap<Integer, PhysicsComponent> physicsComponent = new HashMap<>();
 	private final HashMap<Integer, InventoryComponent> inventoryComponent = new HashMap<>();
+	private final HashMap<Integer, AnimationComponent> animationComponent = new HashMap<>();
 	
 	// --- eID de-/allocation ---
 	
@@ -115,6 +117,13 @@ public class EntityController {
 		return comp;
 	}
 	
+	public AnimationComponent addAnimationComponent(int eID) {
+		entities.get(eID).add(CompType.ANIMATIONCOMPONENT);
+		AnimationComponent comp = new AnimationComponent(eID);
+		animationComponent.put(eID, comp);
+		return comp;
+	}
+	
 	public void addComponentOfType(int eID, CompType type, Component component) {
 		component.setEID(eID);
 		switch (type){
@@ -126,6 +135,7 @@ public class EntityController {
 			case PLAYERCONTROLLERCOMPONENT: playerControllerComponent.put(eID, (PlayerControllerComponent) component); break;
 			case PHYSICSCOMPONENT: physicsComponent.put(eID, (PhysicsComponent) component); break;
 			case INVENTORYCOMPONENT: inventoryComponent.put(eID, (InventoryComponent) component); break;
+			case ANIMATIONCOMPONENT: animationComponent.put(eID, (AnimationComponent) component); break;
 			default: System.err.println("Failed to add component of type " + type + " to entity " + eID + "! Unknown type!");
 		}
 	}
@@ -172,6 +182,11 @@ public class EntityController {
 		return inventoryComponent.remove(eID);
 	}
 	
+	public AnimationComponent removeAnimationComponent(int eID) {
+		entities.get(eID).remove(CompType.ANIMATIONCOMPONENT);
+		return animationComponent.remove(eID);
+	}
+	
 	public Component removeComponentOfType(int eID, CompType type) {
 		if(!hasComponent(eID, type)) {
 			return null;
@@ -185,6 +200,7 @@ public class EntityController {
 				case PLAYERCONTROLLERCOMPONENT: return removePlayerControllerComponent(eID);
 				case PHYSICSCOMPONENT: return removePhysicsComponent(eID);
 				case INVENTORYCOMPONENT: return removeInventoryComponent(eID);
+				case ANIMATIONCOMPONENT: return removeAnimationComponent(eID);
 				default: System.err.println("Failed to remove component of type " + type + " from entity " + eID + "! Unknown type!"); return null;
 			}
 		}
@@ -228,7 +244,7 @@ public class EntityController {
 		return fppCameraComponent.get(eID);
 	}
 	
-	public HashSet<FPPCameraComponent> getFPPCameraComponents(){
+	public HashSet<FPPCameraComponent> getFPPCameraComponents() {
 		return new HashSet<FPPCameraComponent>(fppCameraComponent.values());
 	}
 	
@@ -236,14 +252,14 @@ public class EntityController {
 		return playerControllerComponent.get(eID);
 	}
 	
-	public HashSet<PlayerControllerComponent> getPlayerControllerComponents(){
+	public HashSet<PlayerControllerComponent> getPlayerControllerComponents() {
 		return new HashSet<PlayerControllerComponent>(playerControllerComponent.values());
 	}
 	public PhysicsComponent getPhysicsComponent(int eID) {
 		return physicsComponent.get(eID);
 	}
 	
-	public HashSet<PhysicsComponent> getPhysicsComponents(){
+	public HashSet<PhysicsComponent> getPhysicsComponents() {
 		return new HashSet<PhysicsComponent>(physicsComponent.values());
 	}
 	
@@ -251,8 +267,16 @@ public class EntityController {
 		return inventoryComponent.get(eID);
 	}
 	
-	public HashSet<InventoryComponent> getInventoryComponents(){
+	public HashSet<InventoryComponent> getInventoryComponents() {
 		return new HashSet<InventoryComponent>(inventoryComponent.values());
+	}
+	
+	public AnimationComponent getAnimationComponent(int eID) {
+		return animationComponent.get(eID);
+	}
+	
+	public HashSet<AnimationComponent> getAnimationComponents() {
+		return new HashSet<AnimationComponent>(animationComponent.values());
 	}
 	
 	public Component getComponentOfType(int eID, CompType type) {
@@ -268,6 +292,7 @@ public class EntityController {
 				case PLAYERCONTROLLERCOMPONENT: return getPlayerControllerComponent(eID);
 				case PHYSICSCOMPONENT: return getPhysicsComponent(eID);
 				case INVENTORYCOMPONENT: return getInventoryComponent(eID);
+				case ANIMATIONCOMPONENT: return getAnimationComponent(eID);
 				default: System.err.println("Failed to get component of type " + type + " from entity " + eID + "! Unknown type!"); return null;
 			}
 		}

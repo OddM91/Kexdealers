@@ -12,7 +12,7 @@ public class RenderComponentEncoder implements EncoderCommand{
 	public void encode(DataOutputStream stream, Component comp) throws IOException {
 		Renderable casted = (Renderable) comp;
 		// write asset name
-		stream.writeChars(casted.getAssetName());
+		stream.writeChars(casted.getResourceName());
 		// terminate with '\n'
 		stream.writeChar('\n');
 	}

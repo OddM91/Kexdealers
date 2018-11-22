@@ -80,7 +80,8 @@ public class PlayerSystem extends AbstractSystem {
 				move.rotate(entityController.getTransformable(PLAYER_ID).getRotation());
 				messageBus.messageSystem(Recipients.PHYSICS_SYSTEM, PhysicsSystem.ADD_ACCELERATION, PLAYER_ID, "move", move);
 				break;
-			default: System.err.println("Player operation not implemented");
+			default: System.err.println("Player operation not implemented" 
+					+message.getBehaviorID());
 			}
 		}
 		
@@ -92,12 +93,12 @@ public class PlayerSystem extends AbstractSystem {
 	
 	@Override
 	public void cleanUp() {
-		// TODO Auto-generated method stub
+		// TODO: ???
 	}
 
 	@Override
 	public void loadBlueprint(ArrayList<String> blueprint) {
-		// TODO Auto-generated method stub
+		// TODO: ???
 		
 	}
 	

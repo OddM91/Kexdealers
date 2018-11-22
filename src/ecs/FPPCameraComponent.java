@@ -25,16 +25,6 @@ public class FPPCameraComponent extends Component{
 	}
 	
 	@Override
-	public int getEID() {
-		return eID;
-	}
-
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
-	
-	@Override
 	public FPPCameraComponent clone() {
 		FPPCameraComponent deepCopy = new FPPCameraComponent(this.eID)
 				.setPosition(new Vector3f(this.cameraPosition));

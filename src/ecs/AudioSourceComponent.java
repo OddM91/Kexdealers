@@ -18,16 +18,6 @@ public class AudioSourceComponent extends Component{
 	public AudioSourceComponent(int eID) {
 		super(eID);
 	}
-
-	@Override
-	public int getEID() {
-		return eID;
-	}
-
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
 	
 	@Override
 	public AudioSourceComponent clone() {

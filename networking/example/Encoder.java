@@ -81,7 +81,7 @@ public class Encoder {
 		output.append(renderable.getEID());
 		output.append("}{");
 		
-		String assetName = renderable.getAssetName();
+		String assetName = renderable.getResourceName();
 		
 		output.append(assetName);
 		

@@ -7,16 +7,6 @@ public class PlayerControllerComponent extends Component{
 	}
 	
 	@Override
-	public int getEID() {
-		return eID;
-	}
-
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
-
-	@Override
 	public PlayerControllerComponent clone() {
 		PlayerControllerComponent deepCopy = new PlayerControllerComponent(this.eID);
 		return deepCopy;

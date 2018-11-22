@@ -20,7 +20,9 @@ import org.lwjgl.openal.EXTLinearDistance;
 import org.lwjgl.openal.EXTThreadLocalContext;
 import org.lwjgl.system.MemoryUtil;
 
+import bus.Message;
 import bus.MessageBus;
+import bus.Recipients;
 import ecs.AbstractSystem;
 import ecs.AudioSourceComponent;
 import ecs.EntityController;
@@ -31,10 +33,10 @@ import loaders.BlueprintLoader;
 
 public class AudioSystem extends AbstractSystem {
 
-	// op codes
+	// opcodes
 	public static final int PLAY_SOUND = 0;
-	public static final int PAUSE_SOUND = 0;
-	public static final int STOP_SOUND = 0;
+	public static final int PAUSE_SOUND = 1;
+	public static final int STOP_SOUND = 2;
 	
 	private final AudioLoader audioLoader;
 
@@ -97,8 +99,23 @@ public class AudioSystem extends AbstractSystem {
 
 	@Override
 	public void update() {
-		// TODO implement message bus
-
+		
+		// Process messages
+		Message message;
+		while((message = messageBus.getNextMessage(Recipients.ANIMATION_SYSTEM)) != null) {
+			
+			final Object[] args = message.getArgs();
+			
+			switch(message.getBehaviorID()) {
+			case PLAY_SOUND:
+			case PAUSE_SOUND:
+			case STOP_SOUND:
+			default: System.err.println("Audio operation not implemented " 
+						+message.getBehaviorID());
+			}
+			
+		}
+		
 		// Assumes that there is only one FPP camera component so the first one found is
 		// used.
 		Set<FPPCameraComponent> fppCamComps = entityController.getFPPCameraComponents();

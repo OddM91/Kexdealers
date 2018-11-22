@@ -2,7 +2,7 @@ package ecs;
 
 public class Renderable extends Component {
 	
-	private String assetName = "default";
+	private String resourceName = "default";
 	
 	// unused right now
 	private String modelName = "default";
@@ -13,19 +13,9 @@ public class Renderable extends Component {
 	}
 	
 	@Override
-	public int getEID(){
-		return eID;
-	}
-	
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
-	
-	@Override
 	public Renderable clone() {
 		Renderable deepCopy = new Renderable(this.eID)
-				.setAssetName(this.assetName)
+				.setResourceName(this.resourceName)
 				.setModelName(this.modelName)
 				.setMaterialName(this.materialName);
 		return deepCopy;
@@ -36,19 +26,19 @@ public class Renderable extends Component {
 		StringBuilder s = new StringBuilder();
 		s.append("Renderable<").append(eID).append(">");
 		s.append("(");
-		s.append(" RES: ").append(assetName);
+		s.append(" RES: ").append(resourceName);
 		s.append(" 3D: ").append(modelName);
 		s.append(" MAT: ").append(materialName);
 		s.append(" )");
 		return s.toString();
 	}
 	
-	public String getAssetName(){
-		return assetName;
+	public String getResourceName(){
+		return resourceName;
 	}
 	
-	public Renderable setAssetName(String assetName) {
-		this.assetName = assetName;
+	public Renderable setResourceName(String assetName) {
+		this.resourceName = assetName;
 		return this;
 	}
 	

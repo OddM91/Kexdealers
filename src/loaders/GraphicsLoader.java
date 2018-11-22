@@ -25,6 +25,9 @@ import com.mokiat.data.front.parser.OBJParser;
 import com.mokiat.data.front.parser.OBJTexCoord;
 import com.mokiat.data.front.parser.OBJVertex;
 
+import animation.AnimatedMesh;
+import animation.AnimatedModel;
+import animation.Animation;
 import example.AssetData;
 import render.DirectionalLight;
 import skybox.Skybox;
@@ -33,6 +36,7 @@ import terrain.TerrainMesh;
 import textures.Material;
 import textures.MultiTexture;
 import textures.Texture;
+import utility.File;
 import utility.MiscUtility;
 import wrapper.ModelData;
 import wrapper.RawMesh;
@@ -53,11 +57,14 @@ public class GraphicsLoader {
 	
 	private final OBJLoader objLoader;
 	
-	// NEW OBJ LOADER STUFF
-	private HashMap<String, Model> models = new HashMap<>();
-	private HashMap<String, Mesh> meshes = new HashMap<>();
-	private HashMap<String, Material> materials = new HashMap<>();
-	// ---
+	private final ColladaLoader colladaLoader;
+	
+	private final HashMap<String, Model> models = new HashMap<>();
+	private final HashMap<String, Mesh> meshes = new HashMap<>();
+	private final HashMap<String, AnimatedModel> animatedModels = new HashMap<>();
+	private final HashMap<String, AnimatedMesh> animatedMesh = new HashMap<>();	
+	private final HashMap<String, HashMap<String, Animation>> animations = new HashMap<>();
+	private final HashMap<String, Material> materials = new HashMap<>();
 	
 	private HashMap<String, Integer> pointerCounter3D = new HashMap<>();
 	private HashMap<String, AssetData> assets3D = new HashMap<>();
@@ -75,103 +82,54 @@ public class GraphicsLoader {
 		modelLoader = new MeshLoader();
 		terrainMeshLoader = new TerrainMeshLoader(modelLoader);
 		objLoader = new OBJLoader();
+		colladaLoader = new ColladaLoader();
 	}
 	
-	public Model getModel(String ressourceName) {
-		Model model = models.get(ressourceName);
+	public Model getModel(String resourceName) {
+		Model model = models.get(resourceName);
 		model.refCountUp();
 		return model;
 	}
 	
 	public void loadModel(String resourceName) {
-		
-		final IOBJParser objParser = new OBJParser();
-		final IMTLParser mtlParser = new MTLParser();
-		
-		try (InputStream inputStream = new FileInputStream(resourceName)) {
-			// parse model
-			final OBJModel model = objParser.parse(inputStream);
-			
-			// extract all the materials used by this model
-			for(String libraryReference : model.getMaterialLibraries()) {
-				final InputStream mtlStream = new FileInputStream(libraryReference);
-				final MTLLibrary mtlLibrary = mtlParser.parse(mtlStream);
-				for(MTLMaterial mtlMaterial : mtlLibrary.getMaterials()) {
-					// check if a material has been loaded already
-					if(materials.containsKey(mtlMaterial.getName())) {
-						continue;
-					} else {
-						final Material material = materialLoader.loadMaterial(mtlMaterial);
-						materials.put(libraryReference, material);
-					}
-				}
-			}
-			
-			// Build Mesh ---
-			// I have no idea how indices work with this library.
-			// I will also only use the vertex-indices.
-			final ArrayList<Float> vertices = new ArrayList<>();
-			final ArrayList<Float> normals = new ArrayList<>();
-			final ArrayList<Float> texCoords = new ArrayList<>();
-			final ArrayList<Integer> indices = new ArrayList<>();
-			// Vertices
-			for(OBJVertex objVertex : model.getVertices()) {
-				vertices.add(objVertex.x);
-				vertices.add(objVertex.y);
-				vertices.add(objVertex.z);
-			}
-			// Normals
-			for(OBJNormal objNormal : model.getNormals()) {
-				normals.add(objNormal.x);
-				normals.add(objNormal.y);
-				normals.add(objNormal.z);
-			}
-			// Texture Coordinates
-			for(OBJTexCoord objTexCoord : model.getTexCoords()) {
-				texCoords.add(objTexCoord.u);
-				texCoords.add(objTexCoord.v);
-				// texCoords.add(objTexCoord.w);
-			}
-			// Indices
-			for(OBJObject objObject: model.getObjects()) {
-				for(OBJMesh objMesh : objObject.getMeshes()) {
-					for(OBJFace objFace : objMesh.getFaces()) {
-						for(OBJDataReference dataRef : objFace.getReferences()) {
-							// extract indices
-							int index_normal = (dataRef.hasNormalIndex()) ? dataRef.normalIndex : -1;
-							// -->
-							indices.add(index_normal);
-							int index_texCoord = (dataRef.hasTexCoordIndex()) ? dataRef.texCoordIndex : -1;
-							int index_vertex = (dataRef.hasVertexIndex()) ? dataRef.vertexIndex : -1;
-						}
-					}
-				}
-			}
-			Mesh mesh = new Mesh(
-					MiscUtility.toFloatArray(vertices),
-					MiscUtility.toFloatArray(texCoords),
-					MiscUtility.toFloatArray(normals),
-					MiscUtility.toIntArray(indices)
-					);
-			mesh.loadToVideoMemory();
-			meshes.put(resourceName, mesh);
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		//model.refCountUp();
+		final File file = new File(MODEL_DIRECTORY, resourceName, ".dae");
+		final Model model = colladaLoader.loadModel(file);
 	}
 	
-	public void unloadModel(String ressourceName) {
-		Model model = models.get(ressourceName);
+	public void unloadModel(String resourceName) {
+		Model model = models.get(resourceName);
 		if(model != null) {
 			boolean alive = model.refCountDown();
 			if(!model.refCountDown()) {
-				models.put(ressourceName, null);
+				models.put(resourceName, null);
 			}
 		}
+	}
+	
+	public AnimatedModel getAnimatedModel(String resourceName) {
+		AnimatedModel animatedModel = animatedModels.get(resourceName);
+		animatedModel.refCountUp();
+		return animatedModel;
+	}
+	
+	public void loadAnimatedModel(String resourceName) {
+		final File file = new File(MODEL_DIRECTORY, resourceName, ".dae");
+		final AnimatedModel animatedModel = colladaLoader.loadAnimatedModel(file);
+		
+	}
+	
+	public void unloadAnimatedModel(String resourceName) {
+		AnimatedModel animatedModel = animatedModels.get(resourceName);
+		if(animatedModel != null) {
+			boolean alive = animatedModel.refCountDown();
+			if(!animatedModel.refCountDown()) {
+				animatedModels.put(resourceName, null);
+			}
+		}
+	}
+
+	public Animation getAnimation(String resourceName, String animationName) {
+		return animations.get(resourceName).get(animationName);
 	}
 	
 	public AssetData getRessource(String assetName){

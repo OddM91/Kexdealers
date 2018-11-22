@@ -19,16 +19,6 @@ public class PhysicsComponent extends Component {
 	}
 
 	@Override
-	public int getEID() {
-		return eID;
-	}
-
-	@Override
-	public void setEID(int eID) {
-		this.eID = eID;
-	}
-	
-	@Override
 	public PhysicsComponent clone() {
 		PhysicsComponent deepCopy = new PhysicsComponent(this.eID)
 				.setVelocity(this.velocity)

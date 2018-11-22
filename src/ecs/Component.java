@@ -8,8 +8,12 @@ public abstract class Component {
 		this.eID = eID;
 	}
 	
-	public abstract int getEID();
-	public abstract void setEID(int eID);
+	public int getEID() {
+		return eID;
+	}
+	public void setEID(int eID) {
+		this.eID = eID;
+	}
 	
 	@Override
 	public abstract Component clone();

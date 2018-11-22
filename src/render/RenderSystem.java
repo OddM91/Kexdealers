@@ -191,7 +191,7 @@ public class RenderSystem extends AbstractSystem {
 	public void materialize(int eID, String assetName){
 		// Generate a new Renderable for <eID>
 		entityController.addRenderable(eID);
-		entityController.getRenderable(eID).setAssetName(assetName);
+		entityController.getRenderable(eID).setResourceName(assetName);
 		// Sort in the new reference for instanced rendering
 		if(entitiesToRender.get(assetName) == null){
 			entitiesToRender.put(assetName, new HashSet<Transformable>());
@@ -203,7 +203,7 @@ public class RenderSystem extends AbstractSystem {
 	
 	public void dematerialize(int eID){
 		// Get <eID>'s Renderable to access the assetName. Use that as key to narrow down the search.
-		String assetName = entityController.getRenderable(eID).getAssetName();
+		String assetName = entityController.getRenderable(eID).getResourceName();
 		// Set a reference to the correct list to reduce map queries
 		HashSet<Transformable> temp = entitiesToRender.get(assetName);
 		// Search the list for the correct Transformable and remove it when found.
