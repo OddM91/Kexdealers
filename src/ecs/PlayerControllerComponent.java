@@ -1,5 +1,7 @@
 package ecs;
 
+import utility.StringUtility;
+
 public class PlayerControllerComponent extends Component{
 	
 	public PlayerControllerComponent(int eID) {
@@ -14,10 +16,8 @@ public class PlayerControllerComponent extends Component{
 	
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("PlayerControllerComponent<").append(eID).append(">");
-		s.append("(");
-		s.append(" )");
-		return s.toString();
+		final String[] tags = {};
+		final Object[] data = {};
+		return StringUtility.toStringHelper("PlayerControllerComponent", eID, tags, data);
 	}
 }

@@ -10,6 +10,8 @@ public class ColladaLoader {
 	
 	public Model loadModel(File file) {
 		XmlNode node = XmlParser.loadXmlFile(file);
+		
+		
 	}
 	
 	public AnimatedModel loadAnimatedModel(File file) {

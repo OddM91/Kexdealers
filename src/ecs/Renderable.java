@@ -1,5 +1,7 @@
 package ecs;
 
+import utility.StringUtility;
+
 public class Renderable extends Component {
 	
 	private String resourceName = "default";
@@ -23,14 +25,9 @@ public class Renderable extends Component {
 	
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("Renderable<").append(eID).append(">");
-		s.append("(");
-		s.append(" RES: ").append(resourceName);
-		s.append(" 3D: ").append(modelName);
-		s.append(" MAT: ").append(materialName);
-		s.append(" )");
-		return s.toString();
+		final String[] tags = {"RES", "3D", "MAT"};
+		final Object[] data = {resourceName, modelName, materialName};
+		return StringUtility.toStringHelper("Renderable", eID, tags, data);
 	}
 	
 	public String getResourceName(){

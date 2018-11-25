@@ -155,7 +155,8 @@ public class LinkStart implements Runnable{
 				case SHUTDOWN:
 					running = false;
 					break;
-				default: System.err.println("Main operation not implemented");
+				default: System.err.println("Main operation not implemented " 
+						+message.getBehaviorID());
 				}
 			
 			}

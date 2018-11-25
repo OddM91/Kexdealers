@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
+import utility.StringUtility;
+
 public class PhysicsComponent extends Component {
 	
 	private Vector3f velocity = new Vector3f();
@@ -20,7 +22,7 @@ public class PhysicsComponent extends Component {
 
 	@Override
 	public PhysicsComponent clone() {
-		PhysicsComponent deepCopy = new PhysicsComponent(this.eID)
+		final PhysicsComponent deepCopy = new PhysicsComponent(this.eID)
 				.setVelocity(this.velocity)
 				.setAffectedByPhysics(this.isAffectedByPhysics)
 				.setOnGround(this.isOnGround);
@@ -32,18 +34,19 @@ public class PhysicsComponent extends Component {
 	
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("PhysicsComponent<").append(eID).append(">");
-		s.append("(");
-		s.append(" V: ").append(velocity);
-		s.append(" Physics: ").append(isAffectedByPhysics);
-		s.append(" Grounded: ").append(isOnGround);
+		final String[] tags = {"V", "Physics", "Grounded", "Accelerations"};
+		
+		final StringBuilder accelerationsString = new StringBuilder();
 		for(Entry<String, Vector3f> a : accelerations.entrySet()) {
-			s.append(" ").append(a.getKey()).append(": ");
-			s.append(a.getValue().x).append("/").append(a.getValue().y).append("/").append(a.getValue().z);
+			accelerationsString.append(" ").append(a.getKey()).append(": ");
+			accelerationsString.append(StringUtility.toStringVector3f(a.getValue()));
 		}
-		s.append(" )");
-		return s.toString();
+		
+		final Object[] data = {StringUtility.toStringVector3f(velocity),
+				isAffectedByPhysics,
+				isOnGround,
+				accelerationsString.toString()};
+		return StringUtility.toStringHelper("PhysicsComponent", eID, tags, data);
 	}
 	
 	public Vector3fc getVelocity() {

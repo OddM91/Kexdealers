@@ -2,6 +2,8 @@ package ecs;
 
 import org.joml.Vector3f;
 
+import utility.StringUtility;
+
 	public class PointLightComponent extends Component{
 	
 	private Vector3f position = new Vector3f();
@@ -29,17 +31,15 @@ import org.joml.Vector3f;
 	
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("PointLightComponent<").append(eID).append(">");
-		s.append("(");
-		s.append(" T: ").append(position.x).append("/").append(position.y).append("/").append(position.z);
-		s.append(" A: ").append(ambient.x).append("/").append(ambient.y).append("/").append(ambient.z);
-		s.append(" D: ").append(diffuse.x).append("/").append(diffuse.y).append("/").append(diffuse.z);
-		s.append(" S: ").append(specular.x).append("/").append(specular.y).append("/").append(specular.z);
-		s.append(" R: ").append(radius);
-		s.append(" C: ").append(cutoff);
-		s.append(" )");
-		return s.toString();
+		String[] tags = {"T", "A", "D", "S", "R", "C"};
+		Object[] data = {StringUtility.toStringVector3f(position),
+				StringUtility.toStringVector3f(ambient),
+				StringUtility.toStringVector3f(diffuse),
+				StringUtility.toStringVector3f(specular),
+				radius,
+				cutoff
+		};
+		return StringUtility.toStringHelper("PointLightComponent", eID, tags, data);
 	}
 	
 	public Vector3f getPosition(){

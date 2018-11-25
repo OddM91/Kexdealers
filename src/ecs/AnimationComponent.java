@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import animation.Animation;
+import utility.StringUtility;
 
 public class AnimationComponent extends Component {
 
@@ -24,7 +25,17 @@ public class AnimationComponent extends Component {
 
 	@Override
 	public String toString() {
-		return null;
+		final String[] tags = {"Animations"};
+		
+		final StringBuilder animationString = new StringBuilder();
+		for(Entry<String, Float> anim : animationProgress.entrySet()) {
+			animationString.append(anim.getKey() +",");
+			animationString.append(animationState.get(anim.getKey()) +",");
+			animationString.append(anim.getValue() +";");
+		}
+		
+		final Object[] data = {animationString.toString()};
+		return StringUtility.toStringHelper("AnimationComponent", eID, tags, data);
 	}
 	
 	public float getAnimationProgress(String animationName) {

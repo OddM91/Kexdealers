@@ -6,10 +6,13 @@ import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.List;
 
+import org.joml.Vector2fc;
+import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 import org.lwjgl.BufferUtils;
 
 public class MiscUtility {
-
+	
 	public static FloatBuffer storeDataInFloatBuffer(float[] data){
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		buffer.put(data);
@@ -71,4 +74,5 @@ public class MiscUtility {
 
 	    return result;
 	}
+	
 }

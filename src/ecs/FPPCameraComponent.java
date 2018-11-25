@@ -4,6 +4,8 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import utility.StringUtility;
+
 public class FPPCameraComponent extends Component{
 	
 	private Vector3f cameraPosition = new Vector3f();
@@ -26,19 +28,16 @@ public class FPPCameraComponent extends Component{
 	
 	@Override
 	public FPPCameraComponent clone() {
-		FPPCameraComponent deepCopy = new FPPCameraComponent(this.eID)
+		final FPPCameraComponent deepCopy = new FPPCameraComponent(this.eID)
 				.setPosition(new Vector3f(this.cameraPosition));
 		return deepCopy;
 	}
 	
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("FPPCameraComponent<").append(eID).append(">");
-		s.append("(");
-		s.append(" T: ").append(cameraPosition.x).append("/").append(cameraPosition.y).append("/").append(cameraPosition.z);
-		s.append(" )");
-		return s.toString();
+		final String[] tags = {"T"};
+		final Object[] data = {StringUtility.toStringVector3f(cameraPosition)};
+		return StringUtility.toStringHelper("FPPCameraComponent", eID, tags, data);
 	}
 	
 	public Matrix4f getViewMatrix(){

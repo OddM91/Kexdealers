@@ -2,6 +2,8 @@ package ecs;
 
 import java.util.ArrayList;
 
+import utility.StringUtility;
+
 public class InventoryComponent extends Component{
 	
 	private boolean isCharacterInventory;
@@ -15,7 +17,7 @@ public class InventoryComponent extends Component{
 	
 	@Override
 	public Component clone() {
-		InventoryComponent deepCopy = new InventoryComponent(this.eID)
+		final InventoryComponent deepCopy = new InventoryComponent(this.eID)
 				.setIsCharacterInventory(this.isCharacterInventory)
 				.setCapacity(this.capacity)
 				.setUsedCapacity(this.usedCapacity)
@@ -25,18 +27,18 @@ public class InventoryComponent extends Component{
 	
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("InventoryComponent<").append(eID).append(">");
-		s.append("(");
-		s.append(" I: ").append(isCharacterInventory);
-		s.append(" C: ").append(capacity);
-		s.append(" U: ").append(usedCapacity);
-		s.append(" CONT: ");
+		final String[] tags = {"I", "C", "U", "CONT"};
+		
+		final StringBuilder contentString = new StringBuilder();
 		for(int i : content) {
-			s.append(i + ", ");
+			contentString.append(i + ", ");
 		}
-		s.append(" )");
-		return s.toString();
+		
+		final Object[] data = {isCharacterInventory,
+				capacity,
+				usedCapacity,
+				contentString.toString()};
+		return StringUtility.toStringHelper("InventoryComponent", eID, tags, data);
 	}
 	
 	public boolean isCharacterInventory() {

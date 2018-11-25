@@ -1,5 +1,7 @@
 package ecs;
 
+import utility.StringUtility;
+
 public class AudioSourceComponent extends Component{
 	
 	private String assetName = "default";
@@ -21,7 +23,7 @@ public class AudioSourceComponent extends Component{
 	
 	@Override
 	public AudioSourceComponent clone() {
-		AudioSourceComponent deepCopy = new AudioSourceComponent(eID)
+		final AudioSourceComponent deepCopy = new AudioSourceComponent(eID)
 				.setAudioSourceFileName(this.assetName)
 				.setSourceID(this.sourceID)
 				.setGain(this.gain)
@@ -34,19 +36,9 @@ public class AudioSourceComponent extends Component{
 	
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("AudioSourceComponent<").append(eID).append(">");
-		s.append("(");
-		s.append(" Name: ").append(assetName);
-		s.append(" sID: ").append(sourceID);
-		s.append(" Gain: ").append(gain);
-		s.append(" Pitch: ").append(pitch);
-		s.append(" RefDist: ").append(referenceDistance);
-		s.append(" Rolloff: ").append(rolloffFactor);
-		s.append(" MaxDist: ").append(maxDistance);
-		s.append(" StartPos: ").append(startPos);
-		s.append(" )");
-		return s.toString();
+		final String[] tags = {"Name", "sID", "Gain", "Pitch", "RefDist", "Rolloff", "MaxDist", "StartPos"};
+		final Object[] data = {assetName, sourceID, gain, pitch, referenceDistance, rolloffFactor, maxDistance, startPos};
+		return StringUtility.toStringHelper("AudioSourceComponent", eID, tags, data);
 	}
 	
 	public String getAudioSourceFileName() {

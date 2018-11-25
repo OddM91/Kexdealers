@@ -19,12 +19,12 @@ import bus.Recipients;
 import ecs.AbstractSystem;
 import ecs.Component;
 import ecs.EntityController;
-import loaders.BlueprintLoader;
 
 public class NetworkSystem extends AbstractSystem implements Runnable{
 	
 	public static final int CONNECT = 0;
 	public static final int DISCONNECT = 1;
+	public static final int LOAD_WORLD = 2;
 	
 	public volatile boolean running = false;
 	
@@ -66,9 +66,8 @@ public class NetworkSystem extends AbstractSystem implements Runnable{
 	}
 	
 	public void update() {
-		super.timeMarkStart();
 		
-		// message queue 
+		// Process messages
 		Message message;
 		while((message = messageBus.getNextMessage(Recipients.NETWORK_SYSTEM)) != null) {
 			
@@ -78,7 +77,7 @@ public class NetworkSystem extends AbstractSystem implements Runnable{
 			case CONNECT:
 				boolean success = connectToServer(
 						(String) args[0], 	// Host name
-						(int) args[0], 		// Port
+						(int) args[1], 		// Port
 						(String) args[2]);	// Login name
 				if(success) {
 					message.setComplete();
@@ -87,11 +86,16 @@ public class NetworkSystem extends AbstractSystem implements Runnable{
 			case DISCONNECT: 
 				disconnectFromServer();
 				break;
-			default: System.err.println("Network operation not implemented");
+			case LOAD_WORLD:
+			default: System.err.println("Network operation not implemented " 
+					+message.getBehaviorID());
 			}
 		}
 		
-		super.timeMarkEnd();
+		// Swap buffered received data into core
+		
+		// Send data to server
+		
 	}
 	
 	public void cleanUp() {
@@ -99,7 +103,7 @@ public class NetworkSystem extends AbstractSystem implements Runnable{
 	}
 	
 	public void loadBlueprint(ArrayList<String> blueprint) {
-		// mostly useless here
+		
 	}
 	
 	// Returns false if connection failed
@@ -146,11 +150,6 @@ public class NetworkSystem extends AbstractSystem implements Runnable{
 			x.printStackTrace();
 		}
 		
-	}
-	
-	// TODO: Fetch data from message return?
-	public ArrayList<String> loadInstanceFromServer() {
-		return BlueprintLoader.splitIntoLines("example\nexample");
 	}
 	
 }

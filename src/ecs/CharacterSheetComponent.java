@@ -1,5 +1,7 @@
 package ecs;
 
+import utility.StringUtility;
+
 public class CharacterSheetComponent extends Component {
 	
 	private String name = "default";
@@ -18,7 +20,7 @@ public class CharacterSheetComponent extends Component {
 	
 	@Override
 	public CharacterSheetComponent clone() {
-		CharacterSheetComponent deepCopy = new CharacterSheetComponent(this.eID)
+		final CharacterSheetComponent deepCopy = new CharacterSheetComponent(this.eID)
 				.setName(this.name)
 				.setLevel(this.level)
 				.setMaxHealth(this.maxHealth)
@@ -29,15 +31,11 @@ public class CharacterSheetComponent extends Component {
 
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("CharacterSheetComponent").append(eID).append(">");
-		s.append("(");
-		s.append(" Name: ").append(name);
-		s.append(" Lvl: ").append(level);
-		s.append(" HP: ").append(remHealth).append("/").append(maxHealth);
-		s.append(" ATK: ").append(attack);
-		s.append(" )");
-		return s.toString();
+		final String[] tags = {"Name", "Lvl", "HP", "ATK"};
+		final Object[] data = {name, level, 
+				remHealth +"/" +maxHealth,
+				attack};
+		return StringUtility.toStringHelper("CharacterSheetComponent", eID, tags, data);
 	}
 	
 	public String getName() {

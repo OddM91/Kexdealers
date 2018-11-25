@@ -7,6 +7,8 @@ import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
+import utility.StringUtility;
+
 
 public class Transformable extends Component{
 	
@@ -38,14 +40,15 @@ public class Transformable extends Component{
 	
 	@Override
 	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("Transformable<").append(eID).append(">");
-		s.append("(");
-		s.append(" T: ").append(position.x).append("/").append(position.y).append("/").append(position.z);
-		s.append(" R: ").append(this.getRotX()).append("/").append(this.getRotY()).append("/").append(this.getRotZ());
-		s.append(" S: ").append(scale);
-		s.append(" )");
-		return s.toString();
+		final String[] tags = {"T", "R", "S"};
+		final String transformationString = String.valueOf(position.x) +"/"
+				+String.valueOf(position.y) +"/"
+				+String.valueOf(position.z);
+		final String rotationString = String.valueOf(getRotX()) +"/"
+				+String.valueOf(getRotY()) +"/"
+				+String.valueOf(getRotZ());
+		final Object[] data = {transformationString, rotationString, scale};
+		return StringUtility.toStringHelper("Transformable", eID, tags, data);
 	}
 	
 	public Vector3fc getPosition() {
