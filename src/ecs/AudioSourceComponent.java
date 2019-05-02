@@ -2,7 +2,7 @@ package ecs;
 
 import utility.StringUtility;
 
-public class AudioSourceComponent extends Component{
+public class AudioSourceComponent extends AbstractComponent{
 	
 	private String assetName = "default";
 	

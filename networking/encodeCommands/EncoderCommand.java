@@ -3,9 +3,9 @@ package encodeCommands;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import ecs.Component;
+import ecs.AbstractComponent;
 
 public interface EncoderCommand {
 	
-	public void encode(DataOutputStream stream, Component comp) throws IOException;
+	public void encode(DataOutputStream stream, AbstractComponent comp) throws IOException;
 }

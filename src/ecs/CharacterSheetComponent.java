@@ -2,7 +2,7 @@ package ecs;
 
 import utility.StringUtility;
 
-public class CharacterSheetComponent extends Component {
+public class CharacterSheetComponent extends AbstractComponent {
 	
 	private String name = "default";
 	

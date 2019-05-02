@@ -7,13 +7,13 @@ public class Entity {
 	private int eID;
 	
 	private ArrayList<EntityController.CompType> componentTypes = new ArrayList<>();
-	private ArrayList<Component> components = new ArrayList<>();
+	private ArrayList<AbstractComponent> components = new ArrayList<>();
 	
 	public Entity(int eID) {
 		this.eID = eID;
 	}
 	
-	public void addComponent(EntityController.CompType type, Component component) {
+	public void addComponent(EntityController.CompType type, AbstractComponent component) {
 		componentTypes.add(type);
 		components.add(component);
 	}
@@ -31,7 +31,7 @@ public class Entity {
 		return componentTypes;
 	}
 	
-	public Component getComponentOfType(EntityController.CompType type) {
+	public AbstractComponent getComponentOfType(EntityController.CompType type) {
 		return components.get(componentTypes.indexOf(type));
 	}
 }

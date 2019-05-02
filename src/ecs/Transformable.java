@@ -10,7 +10,7 @@ import org.joml.Vector3fc;
 import utility.StringUtility;
 
 
-public class Transformable extends Component{
+public class Transformable extends AbstractComponent{
 	
 	private Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
 	

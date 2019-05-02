@@ -4,7 +4,7 @@ import org.joml.Vector3f;
 
 import utility.StringUtility;
 
-	public class PointLightComponent extends Component{
+	public class PointLightComponent extends AbstractComponent{
 	
 	private Vector3f position = new Vector3f();
 	private Vector3f ambient = new Vector3f();
