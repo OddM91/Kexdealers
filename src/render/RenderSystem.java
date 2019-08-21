@@ -23,11 +23,11 @@ import ecs.AbstractSystem;
 import ecs.EntityController;
 import ecs.FPPCameraComponent;
 import ecs.Transformable;
+import gui.GUIRenderer;
 import loaders.BlueprintLoader;
 import loaders.GraphicsLoader;
 import skybox.SkyboxRenderer;
 import terrain.TerrainRenderer;
-import ui.LineRenderer;
 
 public class RenderSystem extends AbstractSystem {
 	
@@ -41,12 +41,9 @@ public class RenderSystem extends AbstractSystem {
 	private final EntityRenderer entityRenderer;
 	private final TerrainRenderer terrainRenderer;
 	private final SkyboxRenderer skyboxRenderer;
-	private final LineRenderer lineRenderer;
+	private final GUIRenderer guiRenderer;
 	
 	private HashMap<String, HashSet<Transformable>> entitiesToRender = new HashMap<>(); // All the currently active transforms for one asset
-	
-	// state tracking
-	private boolean drawDebugLines = false;
 	
 	/*
 	 * TODO: Make separate ResourceLoaders for separate types of resources. 
@@ -76,7 +73,7 @@ public class RenderSystem extends AbstractSystem {
 		entityRenderer = new EntityRenderer();
 		terrainRenderer = new TerrainRenderer();
 		skyboxRenderer = new SkyboxRenderer();
-		lineRenderer = new LineRenderer();
+		guiRenderer = new GUIRenderer();
 	}
 	
 	@Override
@@ -233,10 +230,6 @@ public class RenderSystem extends AbstractSystem {
 		terrainRenderer.render(graphicsLoader, camera, entityController.getPointLightComponents());
 		
 		entityRenderer.render(graphicsLoader, camera, entitiesToRender, entityController.getPointLightComponents());
-		
-		if (drawDebugLines) {
-			lineRenderer.render(camera, getFrameTimeMillis());
-		}
 		
 		// Swap buffer to make changes visible
 		display.submitFrame();

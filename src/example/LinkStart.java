@@ -60,10 +60,10 @@ public class LinkStart implements Runnable{
 		
 		// Message Bus
 		MessageBus messageBus = MessageBus.getInstance();
-
+		
 		// Input
 		InputMapper inputMapper = new InputMapper(display, messageBus);
-
+		
 		// Systems - Create a System here if you want to use it :)
 		systems.put("RenderSystem", new RenderSystem(messageBus, entityController, display));
 		systems.put("TeleportationSystem", new TeleportationSystem(messageBus, entityController));

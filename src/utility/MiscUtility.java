@@ -1,10 +1,14 @@
 package utility;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
@@ -73,6 +77,25 @@ public class MiscUtility {
 	    System.arraycopy(b, 0, result, aLen, bLen);        
 
 	    return result;
+	}
+	
+	public static Properties loadProperties(String path) {
+		try (FileInputStream inputStream = new FileInputStream(path)){
+			final Properties properties = new Properties();
+			properties.load(inputStream);
+			return properties;
+		} catch (IOException x) {
+			System.err.println("Couldn't open " +path);
+		}
+		return null;
+	}
+	
+	public static void saveProperties(Properties properties, String path) {
+		try (FileOutputStream outputStream = new FileOutputStream(path)){
+			properties.store(outputStream, "reactor_properties");
+		} catch (IOException x) {
+			System.err.println("Couldn't write " +path);
+		}
 	}
 	
 }

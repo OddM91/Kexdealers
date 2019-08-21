@@ -12,26 +12,19 @@ import utility.StringUtility;
 
 public class Transformable extends Component{
 	
-	private Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
-	
-	private Quaternionf rotation = new Quaternionf().identity();
-	
+	private final Matrix4f transformation = new Matrix4f().identity();
+
+	private final Vector3f position = new Vector3f(0.0f, 0.0f, 0.0f);
+	private final Quaternionf rotation = new Quaternionf().identity();
 	private float scale = 1.0f;
-	
-	// vecs and mats for getters. are to be updated by their respective
-	// getters
-	private Matrix4f transformation = new Matrix4f();
-	private Vector3f dirVec = new Vector3f();
 	
 	public Transformable(int eID){
 		super(eID);
-		
-		transformation = new Matrix4f().identity();
 	}
 	
 	@Override
 	public Transformable clone() {
-		Transformable deepCopy = new Transformable(this.eID)
+		final Transformable deepCopy = new Transformable(this.eID)
 				.setPosition(new Vector3f(this.position))
 				.setRotation(new Quaternionf(this.rotation))
 				.setScale(this.scale);
@@ -41,13 +34,9 @@ public class Transformable extends Component{
 	@Override
 	public String toString() {
 		final String[] tags = {"T", "R", "S"};
-		final String transformationString = String.valueOf(position.x) +"/"
-				+String.valueOf(position.y) +"/"
-				+String.valueOf(position.z);
-		final String rotationString = String.valueOf(getRotX()) +"/"
-				+String.valueOf(getRotY()) +"/"
-				+String.valueOf(getRotZ());
-		final Object[] data = {transformationString, rotationString, scale};
+		final Object[] data = {StringUtility.toStringVector3f(position), 
+				StringUtility.toStringVector3f(getEulerRotation()), 
+				scale};
 		return StringUtility.toStringHelper("Transformable", eID, tags, data);
 	}
 	
@@ -56,7 +45,7 @@ public class Transformable extends Component{
 	}
 
 	public Transformable setPosition(Vector3f position) {
-		this.position = position;
+		this.position.set(position);
 		return this;
 	}
 	
@@ -65,7 +54,7 @@ public class Transformable extends Component{
 	}
 	
 	public Transformable setRotation(Quaternionf rotation) {
-		this.rotation = rotation;
+		this.rotation.set(rotation);
 		return this;
 	}
 	
@@ -129,7 +118,7 @@ public class Transformable extends Component{
 		rotation.rotateLocal(angleX, angleY, angleZ);
 	}
 	
-	public void rotate(float angleX, float angleY, float angleZ){
+	public void rotateDegrees(float angleX, float angleY, float angleZ){
 		rotateRadians((float) Math.toRadians(angleX),
 						(float) Math.toRadians(angleY), 
 						(float) Math.toRadians(angleZ));
@@ -140,9 +129,8 @@ public class Transformable extends Component{
 	}
 	
 	public Vector3fc getDirectionVector(){
-		dirVec.set(0,0,1);
-		dirVec.rotate(rotation);
-		
-		return dirVec;
+		final Vector3f directionVector = new Vector3f(0.0f, 0.0f, 1.0f);
+		directionVector.rotate(rotation);
+		return directionVector;
 	}
 }

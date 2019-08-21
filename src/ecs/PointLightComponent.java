@@ -6,10 +6,10 @@ import utility.StringUtility;
 
 	public class PointLightComponent extends Component{
 	
-	private Vector3f position = new Vector3f();
-	private Vector3f ambient = new Vector3f();
-	private Vector3f diffuse = new Vector3f();
-	private Vector3f specular = new Vector3f();
+	private final Vector3f position = new Vector3f();
+	private final Vector3f ambient = new Vector3f();
+	private final Vector3f diffuse = new Vector3f();
+	private final Vector3f specular = new Vector3f();
 	private float radius = 0.0f;
 	private float cutoff = 0.005f;
 	
@@ -47,7 +47,7 @@ import utility.StringUtility;
 	}
 
 	public PointLightComponent setPosition(Vector3f position){
-		this.position = position;
+		this.position.set(position);
 		return this;
 	}
 
@@ -56,7 +56,7 @@ import utility.StringUtility;
 	}
 
 	public PointLightComponent setAmbient(Vector3f ambient){
-		this.ambient = ambient;
+		this.ambient.set(ambient);
 		return this;
 	}
 
@@ -65,7 +65,7 @@ import utility.StringUtility;
 	}
 
 	public PointLightComponent setDiffuse(Vector3f diffuse){
-		this.diffuse = diffuse;
+		this.diffuse.set(diffuse);
 		return this;
 	}
 
@@ -74,7 +74,7 @@ import utility.StringUtility;
 	}
 
 	public PointLightComponent setSpecular(Vector3f specular){
-		this.specular = specular;
+		this.specular.set(specular);
 		return this;
 	}
 

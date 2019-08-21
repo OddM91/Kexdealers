@@ -1,6 +1,5 @@
 package audio;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,6 +11,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
+
+import utility.File;
 
 public class WaveData {
 	
@@ -61,24 +62,24 @@ public class WaveData {
 	}
 	
 	public static WaveData create(String fileName) {
-		try {//(BufferedInputStream stream = new BufferedInputStream(Class.class.getResourceAsStream(fileName)))
+		try {
 			File file = new File(fileName);
 			
-			AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+			AudioInputStream audioStream = AudioSystem.getAudioInputStream(file.getInputStream());
 			return new WaveData(audioStream);
 			
 		} catch (FileNotFoundException x) {
 			System.err.println("Couldn't find audio file: " +fileName);
 			x.printStackTrace();
-			
+			return null;
 		} catch (IOException x) {
 			x.printStackTrace();
-			
+			return null;
 		} catch (UnsupportedAudioFileException x) {
+			System.err.println("Audio file not supported: " +fileName);
 			x.printStackTrace();
+			return null;
 		}
-		// ugh
-		return null;
 	}
 	
 	private static int getOpenAlFormat(int channels, int bitsPerSample) throws UnsupportedAudioFileException {

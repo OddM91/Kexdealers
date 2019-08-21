@@ -43,7 +43,6 @@ public class MessageBus {
 		Message message = new Message(recipient, behaviorID, args);
 		queues.get(recipient).addLast(message);
 		return message;
-		// TODO: Actually support this throughout all systems :)
 	}
 	
 }

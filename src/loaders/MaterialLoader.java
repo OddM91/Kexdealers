@@ -13,9 +13,6 @@ import org.lwjgl.opengl.GL21C;
 import org.lwjgl.opengl.GL30C;
 import org.lwjgl.stb.STBImage;
 
-import com.mokiat.data.front.parser.MTLColor;
-import com.mokiat.data.front.parser.MTLMaterial;
-
 import textures.Material;
 import textures.MultiTexture;
 import textures.Texture;
@@ -51,46 +48,6 @@ public class MaterialLoader {
 	}
 	
 	private ArrayList<Integer> textures = new ArrayList<>();
-	
-	public Material loadMaterial(MTLMaterial material) {
-		String name = material.getName();
-		// Colors
-		MTLColor color = material.getAmbientColor();
-		Vector3f ambient = new Vector3f(color.r, color.g, color.b);
-		color = material.getDiffuseColor();
-		Vector3f diffuse = new Vector3f(color.r, color.g, color.b);
-		color = material.getSpecularColor();
-		Vector3f specular = new Vector3f(color.r, color.g, color.b);
-		color = material.getTransmissionColor();
-		Vector3f transmission = new Vector3f(color.r, color.g, color.b);
-		// Textures
-		final String ambientFile = material.getAmbientTexture();
-		final String diffuseFile = material.getDiffuseTexture();
-		final String specularFile = material.getSpecularTexture();
-		final String specularExponentFile = material.getSpecularExponentTexture();
-		final String dissolveFile = material.getDissolveTexture();
-		int ambientID = loadTexture(
-				(ambientFile == null) ? "default" : ambientFile,
-				false);
-		int diffuseID = loadTexture(
-				(diffuseFile == null) ? "default" : diffuseFile,
-				true);
-		int specularID = loadTexture(
-				(specularFile == null) ? "default" : specularFile,
-				false);
-		int specularExponentID = loadTexture(
-				(specularExponentFile == null) ? "default" : specularExponentFile,
-				false);
-		int dissolveID = loadTexture(
-				(dissolveFile == null) ? "default" : dissolveFile, false);
-		// Parameters
-		float dissolve = material.getDissolve();
-		float specularExponent = material.getSpecularExponent();
-		
-		return new Material(name, ambient, diffuse, specular, transmission,
-				ambientID, diffuseID, specularID, specularExponentID, dissolveID,
-				dissolve, specularExponent);
-	}
 	
 	public Material loadMaterial(String filename, float shininess){
 		Texture2D diffuse = loadTexture2D(filename +"_diffuse", true);

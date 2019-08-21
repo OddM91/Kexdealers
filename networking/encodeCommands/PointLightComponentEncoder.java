@@ -27,9 +27,6 @@ public class PointLightComponentEncoder implements EncoderCommand{
 		stream.writeFloat(casted.getSpecular().x);
 		stream.writeFloat(casted.getSpecular().y);
 		stream.writeFloat(casted.getSpecular().z);		
-		// write attenuation l q c as float
-		stream.writeFloat(casted.getAttenuation().x);
-		stream.writeFloat(casted.getAttenuation().y);
-		stream.writeFloat(casted.getAttenuation().z);		
+		// write radius, cutoff	
 	}
 }

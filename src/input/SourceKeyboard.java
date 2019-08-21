@@ -38,6 +38,7 @@ public class SourceKeyboard implements InputSourceI {
 	// flags
 	private boolean doJump = false;
 	private boolean doInteract = false;
+	private boolean doAbility = false;
 	private boolean doTeleport = false;
 	private boolean toggleWireframe = false;
 
@@ -135,63 +136,55 @@ public class SourceKeyboard implements InputSourceI {
 
 	@Override
 	public boolean doInteract() {
-		int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.INTERACT));
-
-		// dointeract is used to ensure that interact can be only triggered once per
-		// keypress
-
-		if (!doInteract && glfwResult == GLFW.GLFW_PRESS) {
-			// key was just pressed
+		System.out.println("hay");
+		final int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.INTERACT));
+		if(!doInteract && glfwResult == GLFW.GLFW_PRESS) {
 			doInteract = true;
 			return true;
 		} else if (doInteract && glfwResult == GLFW.GLFW_RELEASE) {
-			// key was just released
 			doInteract = false;
 		}
-		// else: key is held down or not pressed
 
 		return false;
 	}
 
 	@Override
 	public boolean doAbility() {
-		return GLFW.glfwGetKey(display.window, keyMappings.get(Actions.ABILITY)) == GLFW.GLFW_PRESS;
+		System.out.println("hay");
+		final int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.ABILITY));
+		if(!doAbility && glfwResult == GLFW.GLFW_PRESS) {
+			doAbility = true;
+			System.out.println("true");
+			return true;
+		} else if(doAbility && glfwResult == GLFW.GLFW_RELEASE) {
+			doAbility = false;
+		}
+		
+		return false;
 	}
 
 	@Override
 	public boolean doTeleport() {
-		int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.TELEPORT));
-
-		// doteleport is used to ensure that teleport can be only triggered once per keypress
-
-		if (!doTeleport && glfwResult == GLFW.GLFW_PRESS) {
-			// key was just pressed
+		final int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.TELEPORT));
+		if(!doTeleport && glfwResult == GLFW.GLFW_PRESS) {
 			doTeleport = true;
 			return true;
 		} else if (doTeleport && glfwResult == GLFW.GLFW_RELEASE) {
-			// key was just released
 			doTeleport = false;
 		}
-		// else: key is held down or not pressed
 
 		return false;
 	}
 
 	@Override
 	public boolean toggleWireframe() {
-			int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.WIREFRAME));
-
-		// togglewireframe is used to ensure that wireframe can be only toggled once per keypress
-
-		if (!toggleWireframe && glfwResult == GLFW.GLFW_PRESS) {
-			// key was just pressed
+		final int glfwResult = GLFW.glfwGetKey(display.window, keyMappings.get(Actions.WIREFRAME));
+		if(!toggleWireframe && glfwResult == GLFW.GLFW_PRESS) {
 			toggleWireframe = true;
 			return true;
 		} else if (toggleWireframe && glfwResult == GLFW.GLFW_RELEASE) {
-			// key was just released
 			toggleWireframe = false;
 		}
-		// else: key is held down or not pressed
 
 		return false;
 	}

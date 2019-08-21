@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.glfw.GLFW;
 
 import bus.Message;
@@ -20,15 +21,16 @@ public class PlayerSystem extends AbstractSystem {
 	
 	// opcodes
 	public static final int INTERACT = 0;
-	public static final int LOOK = 1;
-	public static final int JUMP = 2;
-	public static final int MOVE = 3;
+	public static final int ABILITY = 1;
+	public static final int LOOK = 2;
+	public static final int JUMP = 3;
+	public static final int MOVE = 4;
 
 	// -- player params
 	private static final int PLAYER_ID = 0; //look into file to choose the correct one :S
 	private final float walkSpeed = 1600.0f;
-	private final Vector3f jumpForce = new Vector3f(0, 100.0f, 0);
-	private final Vector3f cameraOffset = new Vector3f(0.0f, 10.0f, 0.0f);
+	private final Vector3fc jumpForce = new Vector3f(0, 100.0f, 0);
+	private final Vector3fc cameraOffset = new Vector3f(0.0f, 10.0f, 0.0f);
 	
 	public PlayerSystem(MessageBus messageBus, EntityController entityController) {
 		super(messageBus, entityController);
@@ -43,9 +45,7 @@ public class PlayerSystem extends AbstractSystem {
 	public void update() {
 
 		final Transformable transformable = entityController.getTransformable(PLAYER_ID);
-		
-		boolean interactInput = false;
-		
+				
 		// Process messages
 		Message message;
 		while((message = messageBus.getNextMessage(Recipients.PLAYER)) != null) {
@@ -54,7 +54,10 @@ public class PlayerSystem extends AbstractSystem {
 			
 			switch(message.getBehaviorID()) {
 			case INTERACT:
-				interactInput = true;
+				System.out.println("Player interacted");
+				break;
+			case ABILITY:
+				System.out.println("Player used ability");
 				break;
 			case LOOK:
 				final Vector3f cameraInput = (Vector3f) args[0];
@@ -85,10 +88,6 @@ public class PlayerSystem extends AbstractSystem {
 			}
 		}
 		
-		// -- Interact
-		if (interactInput) {
-			System.out.println("Player interacted");
-		}
 	}
 	
 	@Override

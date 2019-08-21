@@ -8,21 +8,22 @@ public class File {
 	
 	private static final String PATH_SEPERATOR = "/";
 	
-	private String path;
-	private String name;
+	private final String path;
+	private final String name;
 	
 	public File(String path) {
-		this.path = PATH_SEPERATOR + path;
+		this.path = path;
 		String[] dirs = path.split(PATH_SEPERATOR);
 		this.name = dirs[dirs.length - 1];
 	}
 
 	public File(String... paths) {
-		this.path = "";
+		String parts = "";
 		for (String part : paths) {
-			this.path += (PATH_SEPERATOR + part);
+			parts += (PATH_SEPERATOR + part);
 		}
-		String[] dirs = path.split(PATH_SEPERATOR);
+		path = parts;
+		String[] dirs = parts.split(PATH_SEPERATOR);
 		this.name = dirs[dirs.length - 1];
 	}
 	
@@ -39,15 +40,13 @@ public class File {
 		return Class.class.getResourceAsStream(path);
 	}
 
-	public BufferedReader getReader() throws Exception {
-		try {
-			InputStreamReader isr = new InputStreamReader(getInputStream());
-			BufferedReader reader = new BufferedReader(isr);
-			return reader;
-		} catch (Exception e) {
-			System.err.println("Couldn't get reader for " + path);
-			throw e;
-		}
+	public BufferedReader getReader() {
+		System.out.println(path);
+		System.out.println(getInputStream() == null);
+		InputStreamReader isr = new InputStreamReader(getInputStream());
+		BufferedReader reader = new BufferedReader(isr);
+		return reader;
+		
 	}
 
 	public String getName() {

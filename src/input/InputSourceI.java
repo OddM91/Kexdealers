@@ -24,10 +24,10 @@ public interface InputSourceI {
 	default float getLookSensitivity() { return 1; }
 	
 	// action
-	default boolean doInteract() {return false; } // interacting with world
+	default boolean doInteract() { return false; }
+	default boolean doAbility() { return false; }
 	
 	// debug
-	default boolean doAbility() { return false; }
 	default boolean doTeleport() { return false; }
 	default boolean toggleWireframe() { return false; }
 }

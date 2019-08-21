@@ -9,7 +9,7 @@ public class InventoryComponent extends Component{
 	private boolean isCharacterInventory;
 	private int capacity = 1;
 	private int usedCapacity = 0;
-	private ArrayList<Integer> content = new ArrayList<>();
+	private final ArrayList<Integer> content = new ArrayList<>();
 	
 	public InventoryComponent(int eID) {
 		super(eID);
@@ -73,7 +73,8 @@ public class InventoryComponent extends Component{
 	}
 	
 	public InventoryComponent setContent(ArrayList<Integer> content) {
-		this.content = content;
+		this.content.clear();
+		this.content.addAll(content);
 		return this;
 	}
 	

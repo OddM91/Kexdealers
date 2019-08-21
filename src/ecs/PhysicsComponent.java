@@ -10,8 +10,8 @@ import utility.StringUtility;
 
 public class PhysicsComponent extends Component {
 	
-	private Vector3f velocity = new Vector3f();
-	private HashMap<String, Vector3f> accelerations = new HashMap<>();
+	private final Vector3f velocity = new Vector3f();
+	private final HashMap<String, Vector3f> accelerations = new HashMap<>();
 	
 	private boolean isAffectedByPhysics = true;
 	private boolean isOnGround = false;
@@ -54,7 +54,7 @@ public class PhysicsComponent extends Component {
 	}
 	
 	public PhysicsComponent setVelocity(Vector3f velocity) {
-		this.velocity = velocity;
+		this.velocity.set(velocity);
 		return this;
 	}
 

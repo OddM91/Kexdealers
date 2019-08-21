@@ -91,16 +91,19 @@ public class InputMapper {
 		messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.LOOK, is.pollLookMove().mul(is.getLookSensitivity()));
 
 		// action
-		if (is.doInteract()) { // interacting with world
+		if (is.doInteract()) {
 			messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.INTERACT, null);
 		}
 
-		// debug
+		// ability
 		if (is.doAbility()) {
-			// TODO
+			System.out.println("hi");
+			messageBus.messageSystem(Recipients.PLAYER, PlayerSystem.ABILITY, null);
 		}
+		
+		// debug
 		if (is.doTeleport()) {
-			messageBus.messageSystem(Recipients.TELEPORTATION_SYSTEM, TeleportationSystem.TARGETED_TELEPORTATION, 0/*playerID*/, new Vector3f(450.0f, 25.0f, 350.0f));
+			messageBus.messageSystem(Recipients.TELEPORTATION_SYSTEM, TeleportationSystem.TARGETED_TELEPORTATION, 0/*playerID*/, new Vector3f(450.0f, 100.0f, 350.0f));
 		}
 		if (is.toggleWireframe()) {
 			wireframeMode = !wireframeMode;

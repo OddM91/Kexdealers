@@ -1,7 +1,7 @@
 package render;
 
 import java.io.BufferedReader;
-import java.io.File;
+
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -17,8 +17,12 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import org.lwjgl.opengl.GL20C;
 
-public  abstract class ShaderProgram{
+import utility.File;
 
+public  abstract class ShaderProgram{
+	
+	private static final String SHADER_LOC = "/shaders/";
+	
 	private int programID;
 	
 	private float[] matrixBuffer4f = new float[16];
@@ -65,21 +69,20 @@ public  abstract class ShaderProgram{
 	}
 	
 	private String readShaderFile(String fileName){
-		StringBuilder string = new StringBuilder();
-		BufferedReader br;
-		try{
-			br = new BufferedReader(new FileReader(new File("./res/shaders/" +fileName)));
+		StringBuilder sb = new StringBuilder();
+		System.out.println(fileName);
+		try (BufferedReader br = new BufferedReader(new File(SHADER_LOC +fileName).getReader())){
 			String line;
-			while((line = br.readLine()) != null){
-				string.append(line);
-				string.append("\n");
+			while((line = br.readLine()) != null) {
+				sb.append(line);
+				sb.append("\n");
 			}
-			br.close();
 		}
 		catch(IOException e){
+			System.err.println("Error while reading shader file: " +fileName);
 			e.printStackTrace();
 		}
-		return string.toString();
+		return sb.toString();
 	}
 	
 	protected abstract void getAllUniformLocations();

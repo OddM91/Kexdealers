@@ -10,21 +10,6 @@ import java.util.HashMap;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import com.mokiat.data.front.parser.IMTLParser;
-import com.mokiat.data.front.parser.IOBJParser;
-import com.mokiat.data.front.parser.MTLLibrary;
-import com.mokiat.data.front.parser.MTLMaterial;
-import com.mokiat.data.front.parser.MTLParser;
-import com.mokiat.data.front.parser.OBJDataReference;
-import com.mokiat.data.front.parser.OBJFace;
-import com.mokiat.data.front.parser.OBJMesh;
-import com.mokiat.data.front.parser.OBJModel;
-import com.mokiat.data.front.parser.OBJNormal;
-import com.mokiat.data.front.parser.OBJObject;
-import com.mokiat.data.front.parser.OBJParser;
-import com.mokiat.data.front.parser.OBJTexCoord;
-import com.mokiat.data.front.parser.OBJVertex;
-
 import animation.AnimatedMesh;
 import animation.AnimatedModel;
 import animation.Animation;

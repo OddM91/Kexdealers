@@ -37,12 +37,7 @@ public class PointLightComponentDecoder implements DecoderCommand{
 				stream.readFloat(),
 				stream.readFloat());
 		comp.setSpecular(specular);
-		// read attenuation l q c as float
-		Vector3f attenuation = new Vector3f(
-				stream.readFloat(),
-				stream.readFloat(),
-				stream.readFloat());
-		comp.setAttenuation(attenuation);
+		// radius, cutoff
 		
 		return comp;
 	}
