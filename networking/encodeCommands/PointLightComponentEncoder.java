@@ -3,13 +3,13 @@ package encodeCommands;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import ecs.Component;
+import ecs.AbstractComponent;
 import ecs.PointLightComponent;
 
 public class PointLightComponentEncoder implements EncoderCommand{
 	
 	@Override
-	public void encode(DataOutputStream stream, Component comp) throws IOException{
+	public void encode(DataOutputStream stream, AbstractComponent comp) throws IOException{
 		PointLightComponent casted = (PointLightComponent) comp;
 		// write position x y z as float
 		stream.writeFloat(casted.getPosition().x);

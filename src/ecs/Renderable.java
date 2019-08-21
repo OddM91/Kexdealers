@@ -2,7 +2,7 @@ package ecs;
 
 import utility.StringUtility;
 
-public class Renderable extends Component {
+public class Renderable extends AbstractComponent {
 	
 	private String resourceName = "default";
 	

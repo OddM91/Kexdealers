@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 
 import utility.StringUtility;
 
-public class FPPCameraComponent extends Component{
+public class FPPCameraComponent extends AbstractComponent{
 	
 	private Vector3f cameraPosition = new Vector3f();
 	private Quaternionf viewDir = new Quaternionf()

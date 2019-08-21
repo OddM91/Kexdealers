@@ -1,10 +1,10 @@
 package ecs;
 
-public abstract class Component {
+public abstract class AbstractComponent {
 	
 	protected int eID;
 	
-	protected Component(int eID) {
+	protected AbstractComponent(int eID) {
 		this.eID = eID;
 	}
 	
@@ -16,7 +16,7 @@ public abstract class Component {
 	}
 	
 	@Override
-	public abstract Component clone();
+	public abstract AbstractComponent clone();
 	@Override
 	public abstract String toString();
 }

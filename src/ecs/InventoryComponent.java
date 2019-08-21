@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import utility.StringUtility;
 
-public class InventoryComponent extends Component{
+public class InventoryComponent extends AbstractComponent{
 	
 	private boolean isCharacterInventory;
 	private int capacity = 1;
@@ -16,7 +16,7 @@ public class InventoryComponent extends Component{
 	}
 	
 	@Override
-	public Component clone() {
+	public AbstractComponent clone() {
 		final InventoryComponent deepCopy = new InventoryComponent(this.eID)
 				.setIsCharacterInventory(this.isCharacterInventory)
 				.setCapacity(this.capacity)

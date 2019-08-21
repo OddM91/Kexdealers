@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 
-import ecs.Component;
+import ecs.AbstractComponent;
 import encodeCommands.EncoderCommand;
 import encodeCommands.PointLightComponentEncoder;
 import encodeCommands.RenderComponentEncoder;
@@ -29,7 +29,7 @@ public class EncodeDelegator {
 		cTypeTable.put("pointlightcomponent", 	(byte) 0x03);
 	}
 	
-	public void delegate(OutputStream rawStream, String cType, Component comp) {
+	public void delegate(OutputStream rawStream, String cType, AbstractComponent comp) {
 		
 		try (DataOutputStream stream = new DataOutputStream(rawStream)) {
 			// write the start signal byte

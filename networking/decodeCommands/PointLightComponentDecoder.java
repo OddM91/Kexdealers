@@ -5,13 +5,13 @@ import java.io.IOException;
 
 import org.joml.Vector3f;
 
-import ecs.Component;
+import ecs.AbstractComponent;
 import ecs.PointLightComponent;
 
 public class PointLightComponentDecoder implements DecoderCommand{
 	
 	@Override
-	public Component decode(DataInputStream stream) throws IOException {
+	public AbstractComponent decode(DataInputStream stream) throws IOException {
 		PointLightComponent comp = new PointLightComponent(0);
 		// read position x y z as float
 		Vector3f position = new Vector3f(

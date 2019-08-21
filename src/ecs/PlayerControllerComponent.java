@@ -2,7 +2,7 @@ package ecs;
 
 import utility.StringUtility;
 
-public class PlayerControllerComponent extends Component{
+public class PlayerControllerComponent extends AbstractComponent{
 	
 	public PlayerControllerComponent(int eID) {
 		super(eID);

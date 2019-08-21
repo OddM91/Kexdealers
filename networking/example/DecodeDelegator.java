@@ -9,7 +9,7 @@ import decodeCommands.DecoderCommand;
 import decodeCommands.PointLightComponentDecoder;
 import decodeCommands.RenderComponentDecoder;
 import decodeCommands.TransformComponentDecoder;
-import ecs.Component;
+import ecs.AbstractComponent;
 
 public class DecodeDelegator {
 	
@@ -30,7 +30,7 @@ public class DecodeDelegator {
 		cTypeTable.put((byte) 0x03, "pointlightcomponent");
 	}
 	
-	public void delegate(DataInputStream stream, Set<Component> buffer) throws IOException{
+	public void delegate(DataInputStream stream, Set<AbstractComponent> buffer) throws IOException{
 		/*
 		 * fetch next message.
 		 * if message is 0x00 => start of block
@@ -49,7 +49,7 @@ public class DecodeDelegator {
 			// read cType from next message
 			byte cType = (byte) stream.readByte();
 			// delegate to command object and catch the returned component object
-			Component comp = commands.get(cType).decode(stream);
+			AbstractComponent comp = commands.get(cType).decode(stream);
 			comp.setEID(nextEID);
 			buffer.add(comp);
 			

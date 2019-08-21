@@ -10,7 +10,7 @@ import org.joml.Vector3fc;
 import utility.StringUtility;
 
 
-public class Transformable extends Component{
+public class Transformable extends AbstractComponent{
 	
 	private final Matrix4f transformation = new Matrix4f().identity();
 

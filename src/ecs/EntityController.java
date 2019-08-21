@@ -124,7 +124,7 @@ public class EntityController {
 		return comp;
 	}
 	
-	public void addComponentOfType(int eID, CompType type, Component component) {
+	public void addComponentOfType(int eID, CompType type, AbstractComponent component) {
 		component.setEID(eID);
 		switch (type){
 			case TRANSFORMABLE: transformable.put(eID, (Transformable) component); break;
@@ -187,7 +187,7 @@ public class EntityController {
 		return animationComponent.remove(eID);
 	}
 	
-	public Component removeComponentOfType(int eID, CompType type) {
+	public AbstractComponent removeComponentOfType(int eID, CompType type) {
 		if(!hasComponent(eID, type)) {
 			return null;
 		}else {
@@ -279,7 +279,7 @@ public class EntityController {
 		return new HashSet<AnimationComponent>(animationComponent.values());
 	}
 	
-	public Component getComponentOfType(int eID, CompType type) {
+	public AbstractComponent getComponentOfType(int eID, CompType type) {
 		if(!hasComponent(eID, type)) {
 			return null;
 		}else {

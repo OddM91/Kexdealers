@@ -8,7 +8,7 @@ import org.joml.Vector3fc;
 
 import utility.StringUtility;
 
-public class PhysicsComponent extends Component {
+public class PhysicsComponent extends AbstractComponent {
 	
 	private final Vector3f velocity = new Vector3f();
 	private final HashMap<String, Vector3f> accelerations = new HashMap<>();

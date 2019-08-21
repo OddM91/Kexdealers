@@ -8,7 +8,7 @@ import java.util.Set;
 import animation.Animation;
 import utility.StringUtility;
 
-public class AnimationComponent extends Component {
+public class AnimationComponent extends AbstractComponent {
 
 	private final HashMap<String, Float> animationProgress = new HashMap<>();
 	private final HashMap<String, Boolean> animationState = new HashMap<>();

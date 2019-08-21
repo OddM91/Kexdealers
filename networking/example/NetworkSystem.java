@@ -17,7 +17,7 @@ import bus.Message;
 import bus.MessageBus;
 import bus.Recipients;
 import ecs.AbstractSystem;
-import ecs.Component;
+import ecs.AbstractComponent;
 import ecs.EntityController;
 
 public class NetworkSystem extends AbstractSystem implements Runnable{
@@ -35,7 +35,7 @@ public class NetworkSystem extends AbstractSystem implements Runnable{
 	private EncodeDelegator encodeDelegator;
 	private DecodeDelegator decodeDelegator;
 	
-	private HashSet<Component> componentBuffer;
+	private HashSet<AbstractComponent> componentBuffer;
 	
 	public NetworkSystem(MessageBus messageBus, EntityController entityController) {
 		super(messageBus, entityController);
@@ -43,7 +43,7 @@ public class NetworkSystem extends AbstractSystem implements Runnable{
 		encodeDelegator = new EncodeDelegator();
 		decodeDelegator = new DecodeDelegator();
 		
-		componentBuffer = new HashSet<Component>();
+		componentBuffer = new HashSet<AbstractComponent>();
 	}
 	
 	public void run() {
