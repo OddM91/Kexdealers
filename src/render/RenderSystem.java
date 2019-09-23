@@ -41,7 +41,7 @@ public class RenderSystem extends AbstractSystem {
 	private final EntityRenderer entityRenderer;
 	private final TerrainRenderer terrainRenderer;
 	private final SkyboxRenderer skyboxRenderer;
-	private final GUIRenderer guiRenderer;
+	private final GUIRenderer guiRenderer = null;
 	
 	private HashMap<String, HashSet<Transformable>> entitiesToRender = new HashMap<>(); // All the currently active transforms for one asset
 	
@@ -73,7 +73,7 @@ public class RenderSystem extends AbstractSystem {
 		entityRenderer = new EntityRenderer();
 		terrainRenderer = new TerrainRenderer();
 		skyboxRenderer = new SkyboxRenderer();
-		guiRenderer = new GUIRenderer();
+		//guiRenderer = new GUIRenderer();
 	}
 	
 	@Override
@@ -230,6 +230,8 @@ public class RenderSystem extends AbstractSystem {
 		terrainRenderer.render(graphicsLoader, camera, entityController.getPointLightComponents());
 		
 		entityRenderer.render(graphicsLoader, camera, entitiesToRender, entityController.getPointLightComponents());
+		
+		//guiRenderer.render();
 		
 		// Swap buffer to make changes visible
 		display.submitFrame();

@@ -16,11 +16,7 @@ import loaders.GraphicsLoader;
 
 public class EntityRenderer {
 
-	private EntityShader shader;
-	
-	public EntityRenderer(){
-		shader = new EntityShader();
-	}
+	private final EntityShader shader = new EntityShader();
 	
 	public void render(GraphicsLoader graphicsLoader,
 			FPPCameraComponent camera,

@@ -8,13 +8,13 @@ import org.joml.Vector3f;
 
 import ecs.PointLightComponent;
 
-public class EntityShader extends ShaderProgram{
-	
+public class EntityShader extends ShaderProgram {
+
 	private static final String VERTEX_FILE = "entityVertexShader.txt";
 	private static final String FRAGMENT_FILE = "entityFragmentShader.txt";
-	
+
 	private static final int MAX_LIGHTS = 4; // Limit on how many lights can affect one point
-	
+
 	private int location_modelMatrix;
 	private int location_viewMatrix;
 	private int location_projectionMatrix;
@@ -35,13 +35,13 @@ public class EntityShader extends ShaderProgram{
 	private int[] location_lightSpecular;
 	private int[] location_lightRadius;
 	private int[] location_lightCutoff;
-	
-	public EntityShader(){
+
+	public EntityShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 		getAllUniformLocations();
 	}
-	
-	protected void getAllUniformLocations(){
+
+	protected void getAllUniformLocations() {
 		location_modelMatrix = super.getUniformLocation("modelMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
@@ -62,44 +62,44 @@ public class EntityShader extends ShaderProgram{
 		location_lightSpecular = new int[MAX_LIGHTS];
 		location_lightRadius = new int[MAX_LIGHTS];
 		location_lightCutoff = new int[MAX_LIGHTS];
-		for(int i = 0; i < MAX_LIGHTS; i++){
-			location_lightPosition[i] = super.getUniformLocation("pointLights[" +i +"].position");
-			location_lightAmbient[i] = super.getUniformLocation("pointLights[" +i +"].ambient");
-			location_lightDiffuse[i] = super.getUniformLocation("pointLights[" +i +"].diffuse");
-			location_lightSpecular[i] = super.getUniformLocation("pointLights[" +i +"].specular");
-			location_lightRadius[i] = super.getUniformLocation("pointLights[" +i +"].radius");
-			location_lightCutoff[i] = super.getUniformLocation("pointLights[" +i +"].cutoff");
+		for (int i = 0; i < MAX_LIGHTS; i++) {
+			location_lightPosition[i] = super.getUniformLocation("pointLights[" + i + "].position");
+			location_lightAmbient[i] = super.getUniformLocation("pointLights[" + i + "].ambient");
+			location_lightDiffuse[i] = super.getUniformLocation("pointLights[" + i + "].diffuse");
+			location_lightSpecular[i] = super.getUniformLocation("pointLights[" + i + "].specular");
+			location_lightRadius[i] = super.getUniformLocation("pointLights[" + i + "].radius");
+			location_lightCutoff[i] = super.getUniformLocation("pointLights[" + i + "].cutoff");
 		}
 	}
-	
-	public void uploadMVP(Matrix4fc modelMatrix, Matrix4fc viewMatrix, Matrix4fc projectionMatrix){
+
+	public void uploadMVP(Matrix4fc modelMatrix, Matrix4fc viewMatrix, Matrix4fc projectionMatrix) {
 		super.loadMatrix4f(location_modelMatrix, modelMatrix);
 		super.loadMatrix4f(location_viewMatrix, viewMatrix);
 		super.loadMatrix4f(location_projectionMatrix, projectionMatrix);
 	}
-	
-	public void uploadMaterial(int diffuseMapTextureBank, int specularMapTexureBank, float shininess){
+
+	public void uploadMaterial(int diffuseMapTextureBank, int specularMapTexureBank, float shininess) {
 		super.loadInt(location_diffuseMap, diffuseMapTextureBank);
 		super.loadInt(location_specularMap, specularMapTexureBank);
 		super.loadFloat(location_shininess, shininess);
 	}
-	
-	public void uploadViewPos(Vector3f cameraPosition){
+
+	public void uploadViewPos(Vector3f cameraPosition) {
 		super.loadVector3f(location_viewPosition, cameraPosition);
 	}
-	
-	public void uploadDirectionalLight(DirectionalLight dirLight){
+
+	public void uploadDirectionalLight(DirectionalLight dirLight) {
 		super.loadVector3f(location_dirLightDirection, dirLight.getDirection());
 		super.loadVector3f(location_dirLightAmbient, dirLight.getAmbient());
 		super.loadVector3f(location_dirLightDiffuse, dirLight.getDiffuse());
 		super.loadVector3f(location_dirLightSpecular, dirLight.getSpecular());
 	}
-	
-	public void uploadPointLights(HashSet<PointLightComponent> pointLights){
+
+	public void uploadPointLights(HashSet<PointLightComponent> pointLights) {
 		PointLightComponent pointLight;
 		Iterator<PointLightComponent> plcIterator = pointLights.iterator();
-		for(int i = 0; i < MAX_LIGHTS; i++){
-			if(i < pointLights.size()){
+		for (int i = 0; i < MAX_LIGHTS; i++) {
+			if (i < pointLights.size()) {
 				pointLight = (PointLightComponent) plcIterator.next();
 				super.loadVector3f(location_lightPosition[i], pointLight.getPosition());
 				super.loadVector3f(location_lightAmbient[i], pointLight.getAmbient());
@@ -117,5 +117,5 @@ public class EntityShader extends ShaderProgram{
 			}
 		}
 	}
-	
+
 }
