@@ -97,7 +97,7 @@ public class EntityShader extends ShaderProgram {
 
 	public void uploadPointLights(HashSet<PointLightComponent> pointLights) {
 		PointLightComponent pointLight;
-		Iterator<PointLightComponent> plcIterator = pointLights.iterator();
+		final Iterator<PointLightComponent> plcIterator = pointLights.iterator();
 		for (int i = 0; i < MAX_LIGHTS; i++) {
 			if (i < pointLights.size()) {
 				pointLight = (PointLightComponent) plcIterator.next();

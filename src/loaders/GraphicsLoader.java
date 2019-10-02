@@ -10,9 +10,9 @@ import java.util.HashMap;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import animation.AnimatedMesh;
 import animation.AnimatedModel;
 import animation.Animation;
+import colladaLoader.ColladaLoader;
 import example.AssetData;
 import render.DirectionalLight;
 import skybox.Skybox;
@@ -124,15 +124,15 @@ public class GraphicsLoader {
 	public void load(String assetName){
 		if(!pointerCounter3D.containsKey(assetName) || pointerCounter3D.get(assetName) == 0){
 			// load fresh from HDD
-			ModelData modelData = objLoader.loadOBJ(assetName);
-			RawMesh rawMesh = modelLoader.loadToVAO(
+			final ModelData modelData = objLoader.loadOBJ(assetName);
+			final RawMesh rawMesh = modelLoader.loadToVAO(
 					modelData.getVertices(),
 					modelData.getIndices(),
 					modelData.getTextureCoords(),
 					modelData.getNormals());
-			// random hardcoded default value for shininess = 1
-			Material material = materialLoader.loadMaterial(assetName, 1.0f);
-			AssetData newAsset = new AssetData(rawMesh, material);
+			final float shininess = 1.0f;
+			final Material material = materialLoader.loadMaterial(assetName, shininess);
+			final AssetData newAsset = new AssetData(rawMesh, material);
 			assets3D.put(assetName, newAsset);
 			pointerCounter3D.put(assetName, 1);
 		}

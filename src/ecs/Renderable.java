@@ -4,11 +4,7 @@ import utility.StringUtility;
 
 public class Renderable extends AbstractComponent {
 	
-	private String resourceName = "default";
-	
-	// unused right now
-	private String modelName = "default";
-	private String materialName = "default";
+	private String modelName;
 	
 	public Renderable(int eID){
 		super(eID);
@@ -16,27 +12,16 @@ public class Renderable extends AbstractComponent {
 	
 	@Override
 	public Renderable clone() {
-		Renderable deepCopy = new Renderable(this.eID)
-				.setResourceName(this.resourceName)
-				.setModelName(this.modelName)
-				.setMaterialName(this.materialName);
+		Renderable deepCopy = new Renderable(super.eID)
+				.setModelName(this.modelName);
 		return deepCopy;
 	}
 	
 	@Override
 	public String toString() {
-		final String[] tags = {"RES", "3D", "MAT"};
-		final Object[] data = {resourceName, modelName, materialName};
+		final String[] tags = {"MODEL"};
+		final Object[] data = {modelName};
 		return StringUtility.toStringHelper("Renderable", eID, tags, data);
-	}
-	
-	public String getResourceName(){
-		return resourceName;
-	}
-	
-	public Renderable setResourceName(String assetName) {
-		this.resourceName = assetName;
-		return this;
 	}
 	
 	public String getModelName() {
@@ -45,15 +30,6 @@ public class Renderable extends AbstractComponent {
 	
 	public Renderable setModelName(String modelName) {
 		this.modelName = modelName;
-		return this;
-	}
-	
-	public String getMaterialName() {
-		return materialName;
-	}
-	
-	public Renderable setMaterialName(String materialName) {
-		this.materialName = materialName;
 		return this;
 	}
 	

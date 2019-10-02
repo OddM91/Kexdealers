@@ -96,13 +96,6 @@ public class RenderSystem extends AbstractSystem {
 				GL11C.glPolygonMode(GL11C.GL_FRONT_AND_BACK, 
 						(wireframe) ? GL11C.GL_LINE : GL11C.GL_FILL);
 				break;
-			/*case SYS_RENDER_DEBUGLINES_ON: drawDebugLines = true;
-				break;
-			case SYS_RENDER_DEBUGLINES_OFF: drawDebugLines = false; lineRenderer.clearLines();
-				break;
-			case SYS_RENDER_DEBUGLINES_ADDNEWLINE:
-				lineRenderer.addLine(message.getPosBegin(), message.getPosEnd(), message.getColour(), message.getTime());
-				break;*/
 			default: System.err.println("Render operation not implemented");
 			}
 		}
@@ -200,9 +193,9 @@ public class RenderSystem extends AbstractSystem {
 	
 	public void dematerialize(int eID){
 		// Get <eID>'s Renderable to access the assetName. Use that as key to narrow down the search.
-		String assetName = entityController.getRenderable(eID).getResourceName();
+		final String assetName = entityController.getRenderable(eID).getResourceName();
 		// Set a reference to the correct list to reduce map queries
-		HashSet<Transformable> temp = entitiesToRender.get(assetName);
+		final HashSet<Transformable> temp = entitiesToRender.get(assetName);
 		// Search the list for the correct Transformable and remove it when found.
 		for(Transformable transformable : temp){
 			if(transformable.getEID() == eID){

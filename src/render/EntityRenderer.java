@@ -32,7 +32,7 @@ public class EntityRenderer {
 		shader.uploadPointLights(pointLights);
 		
 		for(String appearance : entitiesToRender.keySet()){
-			AssetData data = graphicsLoader.getRessource(appearance);
+			final AssetData data = graphicsLoader.getRessource(appearance);
 			bindEntityAppearance(data);
 			
 			HashSet<Transformable> transformations = entitiesToRender.get(appearance);

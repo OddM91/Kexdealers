@@ -1,15 +1,27 @@
-package utility;
+package xmlparser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+/**
+ * Represents a node in an XML file. This contains the name of the node, a map
+ * of the attributes and their values, any text data between the start and end
+ * tag, and a list of all its children nodes.
+ * 
+ * From: https://github.com/TheThinMatrix/OpenGL-Animation/blob/master/ColladaParser/xmlParser/XmlNode.java
+ * 
+ * @author Karl
+ *
+ */
 public class XmlNode {
+
+	private final HashMap<String, String> attributes = new HashMap<>();
+	private final HashMap<String, List<XmlNode>> childNodes = new HashMap<>();
+	private final String name;
 	
-	private String name;
-	private HashMap<String, String> attributes;
 	private String data;
-	private HashMap<String, ArrayList<XmlNode>> childNodes;
-	
+
 	protected XmlNode(String name) {
 		this.name = name;
 	}
@@ -38,7 +50,7 @@ public class XmlNode {
 	 * @return The value of the attribute.
 	 */
 	public String getAttribute(String attr) {
-		if (attributes != null) {
+		if (!attributes.isEmpty()) {
 			return attributes.get(attr);
 		} else {
 			return null;
@@ -53,8 +65,8 @@ public class XmlNode {
 	 * @return The child XML node with the given name.
 	 */
 	public XmlNode getChild(String childName) {
-		if (childNodes != null) {
-			ArrayList<XmlNode> nodes = childNodes.get(childName);
+		if (!childNodes.isEmpty()) {
+			final List<XmlNode> nodes = childNodes.get(childName);
 			if (nodes != null && !nodes.isEmpty()) {
 				return nodes.get(0);
 			}
@@ -78,7 +90,7 @@ public class XmlNode {
 	 *         for the chosen attribute.
 	 */
 	public XmlNode getChildWithAttribute(String childName, String attr, String value) {
-		ArrayList<XmlNode> children = getChildren(childName);
+		List<XmlNode> children = getChildren(childName);
 		if (children == null || children.isEmpty()) {
 			return null;
 		}
@@ -99,9 +111,9 @@ public class XmlNode {
 	 * @return A list of the child nodes with the given name. If none exist then
 	 *         an empty list is returned.
 	 */
-	public ArrayList<XmlNode> getChildren(String name) {
-		if (childNodes != null) {
-			ArrayList<XmlNode> children = childNodes.get(name);
+	public List<XmlNode> getChildren(String name) {
+		if (!childNodes.isEmpty()) {
+			final List<XmlNode> children = childNodes.get(name);
 			if (children != null) {
 				return children;
 			}
@@ -120,9 +132,6 @@ public class XmlNode {
 	 *            - the value of the attribute.
 	 */
 	protected void addAttribute(String attr, String value) {
-		if (attributes == null) {
-			attributes = new HashMap<String, String>();
-		}
 		attributes.put(attr, value);
 	}
 
@@ -133,10 +142,7 @@ public class XmlNode {
 	 *            - the child node to add.
 	 */
 	protected void addChild(XmlNode child) {
-		if (childNodes == null) {
-			childNodes = new HashMap<String, ArrayList<XmlNode>>();
-		}
-		ArrayList<XmlNode> list = childNodes.get(child.name);
+		List<XmlNode> list = childNodes.get(child.name);
 		if (list == null) {
 			list = new ArrayList<XmlNode>();
 			childNodes.put(child.name, list);
@@ -154,4 +160,5 @@ public class XmlNode {
 	protected void setData(String data) {
 		this.data = data;
 	}
+
 }
