@@ -5,7 +5,6 @@
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="networking"/>
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="src" path="colladaLoader"/>
 	<classpathentry exported="true" kind="lib" path="lib/jars/lwjgl.jar"/>

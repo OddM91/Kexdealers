@@ -157,10 +157,10 @@ public class RenderSystem extends AbstractSystem {
 		for(String dataSet : pointLightComponentData){
 			int eID = BlueprintLoader.extractEID(dataSet);
 			frags = BlueprintLoader.getDataFragments(dataSet);
-			Vector3f position = new Vector3f(Float.valueOf(frags[0]), Float.valueOf(frags[1]), Float.valueOf(frags[2]));
-			Vector3f ambient = new Vector3f(Float.valueOf(frags[3]), Float.valueOf(frags[4]), Float.valueOf(frags[5]));
-			Vector3f diffuse = new Vector3f(Float.valueOf(frags[6]), Float.valueOf(frags[7]), Float.valueOf(frags[8]));
-			Vector3f specular = new Vector3f(Float.valueOf(frags[9]), Float.valueOf(frags[10]), Float.valueOf(frags[11]));
+			final Vector3f position = new Vector3f(Float.valueOf(frags[0]), Float.valueOf(frags[1]), Float.valueOf(frags[2]));
+			final Vector3f ambient = new Vector3f(Float.valueOf(frags[3]), Float.valueOf(frags[4]), Float.valueOf(frags[5]));
+			final Vector3f diffuse = new Vector3f(Float.valueOf(frags[6]), Float.valueOf(frags[7]), Float.valueOf(frags[8]));
+			final Vector3f specular = new Vector3f(Float.valueOf(frags[9]), Float.valueOf(frags[10]), Float.valueOf(frags[11]));
 			entityController.addPointLightComponent(eID)
 				.setPosition(position)
 				.setAmbient(ambient)
